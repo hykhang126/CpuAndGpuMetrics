@@ -26,11 +26,17 @@ class Program
     private static GpuType gpu = GpuType.Nvidia;
 
     private static int testno = 1;
+    private static bool isHardwareAccel = false;
 
     //Combining file name and path
-    private static string fileName = $"AutomatedData_#List of configurations. Add new configurations or edit existing ones by using IntelliSense.
+    private static string fileName = $"AutomatedData_#{testno}.xlsx";
+    private static string filePath = Path.Combine(EXCELDIRECTORY, fileName);
 
-
+    /// <summary>
+    /// Main entry point of the Automation program
+    /// </summary>
+    static void Main()
+    {
         // Set Sources path
         string[] fileNames = Directory.GetFiles(TESTSOURCESPATH);
 
@@ -49,7 +55,8 @@ class Program
             {
                 Video video = FilenameToVideo(filename);
                 PerformanceMetricsContainer container = new();
-                HardwareAccelerator hwaccel = new(hardwareAccel, gpu, true);
+                // read from cmd line
+                HardwareAccelerator hwaccel = new(hardwareAccel, gpu, isHardwareAccel);
 
                 FFmpegProcess ffmpegProcess = FilenameToFFmpegProcess(filename, video, hwaccel);
                 
@@ -99,6 +106,7 @@ class Program
             }
 
         }
+
     }
 
     /// <summary>
