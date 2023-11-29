@@ -1755,16 +1755,15 @@
   },
   "packageFolders": {
     "C:\\Users\\bsousou\\.nuget\\packages\\": {}
-    
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\bsousou\\Documents\\GitHub\\CPUAndGPUMetrics\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation.csproj",
+      "projectUniqueName": "C:\\Users\\bsousou\\Documents\\GitHub\\CpuAndGpuMetrics\\WINDOWS\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation.csproj",
       "projectName": "Encode_Decode_Testing_Automation",
-      "projectPath": "C:\\Users\\bsousou\\Documents\\GitHub\\CPUAndGPUMetrics\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation.csproj",
+      "projectPath": "C:\\Users\\bsousou\\Documents\\GitHub\\CpuAndGpuMetrics\\WINDOWS\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation.csproj",
       "packagesPath": "C:\\Users\\bsousou\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\bsousou\\Documents\\GitHub\\CPUAndGPUMetrics\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation\\obj\\",
+      "outputPath": "C:\\Users\\bsousou\\Documents\\GitHub\\CPUAndGPUMetrics\\WINDOWS\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\bsousou\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -1821,8 +1820,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.404\\RuntimeIdentifierGraph.json"
       }
     }
   }

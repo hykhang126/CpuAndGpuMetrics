@@ -32,6 +32,9 @@ namespace CpuAndGpuMetrics
         /// <summary>Overall GPU video decode usage on engine 2. (n/a on intel GPU)</summary>
         private float? videoDecode2;
 
+        /// <summary>Overall GPU video encode usage </summary>
+        private float videoEncode;
+
         /// <summary>Overall CPU usage.</summary>
         private float cpuUsage;
 
@@ -104,6 +107,15 @@ namespace CpuAndGpuMetrics
         }
 
         /// <summary>
+        /// Gets or sets the video decode gpu % (from engine 2).
+        /// </summary>
+        public float VideoEncode
+        {
+            get { return videoEncode; }
+            set { videoEncode = value; }
+        }
+
+        /// <summary>
         /// Gets or sets the overall cpu usage %. 
         /// </summary>
         public float CpuUsage
@@ -132,27 +144,29 @@ namespace CpuAndGpuMetrics
                 VideoDecode0 = gpuMetrics[2];
                 VideoDecode1 = 0;
                 GpuOverall = new[] { Gpu3D, VideoDecode0, GpuCopy }.Max();
+                VideoEncode = gpuMetrics[3];
             } 
             else if (type == GpuType.Nvidia)
             {
                 VideoDecode0 = VideoDecode1 = (float)(VideoDecode2 = gpuMetrics[2] / 3);
                 GpuOverall = new[] { Gpu3D, VideoDecode0, GpuCopy }.Max();
+                VideoEncode = gpuMetrics[3];
             }
         }
-
-       /*
-        public void DisplayValues()
-        {
-            Console.WriteLine("Performance Metrics:");
-            Console.WriteLine($"Frames Per Second: {FramesPerSecond?.ToString() ?? "N/A"}");
-            Console.WriteLine($"GPU Overall: {GpuOverall}");
-            Console.WriteLine($"GPU 3D: {Gpu3D}");
-            Console.WriteLine($"GPU Copy: {GpuCopy}");
-            Console.WriteLine($"Video Decode 0: {VideoDecode0}");
-            Console.WriteLine($"Video Decode 1: {VideoDecode1}");
-            Console.WriteLine($"Video Decode 2: {VideoDecode2?.ToString() ?? "N/A"}");
-            Console.WriteLine($"CPU Usage: {CpuUsage}");
-        }
-       */
+        
+        /*
+         public void DisplayValues()
+         {
+             Console.WriteLine("Performance Metrics:");
+             Console.WriteLine($"Frames Per Second: {FramesPerSecond?.ToString() ?? "N/A"}");
+             Console.WriteLine($"GPU Overall: {GpuOverall}");
+             Console.WriteLine($"GPU 3D: {Gpu3D}");
+             Console.WriteLine($"GPU Copy: {GpuCopy}");
+             Console.WriteLine($"Video Decode 0: {VideoDecode0}");
+             Console.WriteLine($"Video Decode 1: {VideoDecode1}");
+             Console.WriteLine($"Video Decode 2: {VideoDecode2?.ToString() ?? "N/A"}");
+             Console.WriteLine($"CPU Usage: {CpuUsage}");
+         }
+        */
     }
 }

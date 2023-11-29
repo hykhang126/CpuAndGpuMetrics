@@ -32,7 +32,7 @@ namespace CpuAndGpuMetrics
         /// <summary>Overall GPU video decode usage on engine 2. (n/a on intel GPU)</summary>
         private float? videoDecode2;
 
-        /// <summary>Overall GPU video decode usage on engine 2. (n/a on intel GPU)</summary>
+        /// <summary>Overall GPU video encode usage </summary>
         private float videoEncode;
 
         /// <summary>Overall CPU usage.</summary>

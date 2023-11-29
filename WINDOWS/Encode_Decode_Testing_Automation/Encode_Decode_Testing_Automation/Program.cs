@@ -205,6 +205,8 @@ class Program
         float? vidDec0 = container.VideoDecode0;
         float? vidDec1 = container.VideoDecode1;
         float? vidDec2 = container.VideoDecode2;
+        float? vidEnc = container.VideoEncode;
+
 
         // Information from Misc. obj
         string OS = "Windows"; // HARD-CODED

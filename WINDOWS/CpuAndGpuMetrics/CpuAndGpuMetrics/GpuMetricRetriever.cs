@@ -38,6 +38,7 @@ namespace CpuAndGpuMetrics
                 float[] decodeValues = new float[instanceNames.Length];
                 float[] d3Values = new float[instanceNames.Length];
                 float[] copyValues = new float[instanceNames.Length];
+                float[] encodeValues = new float[instanceNames.Length];
 
                 // Loop through all instances and populate values
                 for (int i = 0; i < instanceNames.Length; i++)
@@ -64,6 +65,12 @@ namespace CpuAndGpuMetrics
                     {
                         value = GetReading(counter, TIME);
                         copyValues[i] = value;
+                    }
+
+                    if (instance.Contains("engtype_VideoEncode"))
+                    {
+                        value = GetReading(counter, TIME);
+                        encodeValues[i] = value;
                     }
 
                     counter.Dispose();
