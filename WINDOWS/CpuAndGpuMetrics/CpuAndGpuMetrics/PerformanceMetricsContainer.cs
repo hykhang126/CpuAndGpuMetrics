@@ -107,12 +107,12 @@ namespace CpuAndGpuMetrics
         }
 
         /// <summary>
-        /// Gets or sets the video decode gpu % (from engine 2).
+        /// Gets or sets the video encode gpu %.
         /// </summary>
-        public float VideoEncode
+        public float? VideoEncode
         {
             get { return videoEncode; }
-            set { videoEncode = value; }
+            set { videoEncode = (float)value; }
         }
 
         /// <summary>

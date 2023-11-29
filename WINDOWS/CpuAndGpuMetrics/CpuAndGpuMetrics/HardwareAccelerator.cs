@@ -13,7 +13,7 @@ namespace CpuAndGpuMetrics
     public class HardwareAccelerator
     {
         /// <summary>Gets or sets the GPU type.</summary>
-        public GpuType? Gpu { get; set; }
+        public GpuType Gpu { get; set; }
 
         /// <summary>Gets or sets the hardware acceleration type.</summary>
         public HardwareAccel HardwareAccel { get; set; }
