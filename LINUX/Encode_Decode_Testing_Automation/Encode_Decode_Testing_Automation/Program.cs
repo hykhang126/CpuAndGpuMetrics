@@ -37,14 +37,6 @@ class Program
     /// Main entry point of the Automation program
     /// </summary>
     static void Main()
-    {    
-    private static string fileName = $"AutomatedData_#{testno}.xlsx";
-    private static string filePath = Path.Combine(EXCELDIRECTORY, fileName);
-
-    /// <summary>
-    /// Main entry point of the Automation program
-    /// </summary>
-    static void Main()
     {
         // Set Sources path
         string[] fileNames = Directory.GetFiles(TESTSOURCESPATH);
