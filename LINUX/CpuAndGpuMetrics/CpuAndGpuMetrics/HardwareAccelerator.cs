@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace CpuAndGpuMetrics
 {
@@ -19,18 +14,18 @@ namespace CpuAndGpuMetrics
         public HardwareAccel HardwareAccel { get; set; }
 
         /// <summary>Gets or sets the boolean to use hw acceleration or not.</summary>
-        public bool IsHardwareAccel { get; set; }
+        public static bool IsDecodeAccel { get; set; }
 
         /// <summary>
         /// Initializes a HardwareAccelerator object.
         /// </summary>
         /// <param name="hardwareAccel"></param>
         /// <param name="gpu"></param>
-        public HardwareAccelerator(HardwareAccel hardwareAccel, GpuType gpu, bool isHardwareAccel)
+        public HardwareAccelerator(HardwareAccel hardwareAccel, GpuType gpu, bool isDecodeAccel = false)
         {
             this.HardwareAccel = hardwareAccel;
             this.Gpu = gpu;
-            this.IsHardwareAccel = isHardwareAccel;
+            HardwareAccelerator.IsDecodeAccel = isDecodeAccel;
         }
 
         /// <summary>
@@ -42,9 +37,9 @@ namespace CpuAndGpuMetrics
         {
             HardwareAccel[] HardwareAccels = gpu switch
             {
-                GpuType.Nvidia => new[] { HardwareAccel.Cuda, HardwareAccel.D3D11VA, HardwareAccel.Vulkan, HardwareAccel.None },
-                GpuType.Intel => new[] { HardwareAccel.QSV, HardwareAccel.D3D11VA, HardwareAccel.Vulkan, HardwareAccel.VAAPI, HardwareAccel.None },
-                _ => new[] { HardwareAccel.None },
+                GpuType.Nvidia => [HardwareAccel.Cuda, HardwareAccel.VDPAU, HardwareAccel.Vulkan, HardwareAccel.None],
+                GpuType.Intel => [HardwareAccel.QSV, HardwareAccel.VAAPI, HardwareAccel.Vulkan, HardwareAccel.None],
+                _ => [HardwareAccel.None],
             };
             return HardwareAccels;
         }
@@ -63,6 +58,7 @@ namespace CpuAndGpuMetrics
         D3D11VA = 4,
         Vulkan = 5,
         VAAPI = 6,
+        VDPAU = 7,
     }
 
     /// <summary>

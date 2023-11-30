@@ -1,21 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\bsousou\\Documents\\GitHub\\CpuAndGpuMetrics\\WINDOWS\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation.csproj": {}
+    "/home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/Encode_Decode_Testing_Automation/Encode_Decode_Testing_Automation/Encode_Decode_Testing_Automation.csproj": {}
   },
   "projects": {
-    "C:\\Users\\bsousou\\Documents\\GitHub\\CpuAndGpuMetrics\\WINDOWS\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation.csproj": {
+    "/home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/Encode_Decode_Testing_Automation/Encode_Decode_Testing_Automation/Encode_Decode_Testing_Automation.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\bsousou\\Documents\\GitHub\\CpuAndGpuMetrics\\WINDOWS\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation.csproj",
+        "projectUniqueName": "/home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/Encode_Decode_Testing_Automation/Encode_Decode_Testing_Automation/Encode_Decode_Testing_Automation.csproj",
         "projectName": "Encode_Decode_Testing_Automation",
-        "projectPath": "C:\\Users\\bsousou\\Documents\\GitHub\\CpuAndGpuMetrics\\WINDOWS\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation.csproj",
-        "packagesPath": "C:\\Users\\bsousou\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\bsousou\\Documents\\GitHub\\CpuAndGpuMetrics\\WINDOWS\\Encode_Decode_Testing_Automation\\Encode_Decode_Testing_Automation\\obj\\",
+        "projectPath": "/home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/Encode_Decode_Testing_Automation/Encode_Decode_Testing_Automation/Encode_Decode_Testing_Automation.csproj",
+        "packagesPath": "/home/matrox/.nuget/packages/",
+        "outputPath": "/home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/Encode_Decode_Testing_Automation/Encode_Decode_Testing_Automation/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\bsousou\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/matrox/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -63,12 +62,26 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[7.0.14, 7.0.14]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.linux-x64",
+              "version": "[7.0.14, 7.0.14]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[7.0.14, 7.0.14]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.404\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.100/RuntimeIdentifierGraph.json"
         }
       }
     }

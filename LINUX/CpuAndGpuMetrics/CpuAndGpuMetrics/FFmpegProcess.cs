@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using CpuAndGpuMetrics;
+﻿using System.Diagnostics;
 
 namespace CpuAndGpuMetrics
 {
@@ -74,6 +65,7 @@ namespace CpuAndGpuMetrics
                 {
                     case HardwareAccel.None:
                     case HardwareAccel.Cuda:
+                    case HardwareAccel.VDPAU:
                     case HardwareAccel.D3D11VA:
                     case HardwareAccel.Vulkan:
                         hwaccel = hardwareAccelerator.HardwareAccel;
@@ -188,7 +180,7 @@ namespace CpuAndGpuMetrics
         {
             string? cmd;
             string codec;
-            float time = 60f;
+            float time = 20f;
 
             // Set the codec
             if (filename.Contains("H264") || filename.Contains("h264") || filename.Contains("libx264") || filename.Contains("x264") )

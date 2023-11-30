@@ -1,17 +1,19 @@
 {
   "version": 2,
-  "dgSpecHash": "FrsZiKfuDupe6cT9iMnjkYbUSpMXhyL6nNp/fFxKk8MqjupPiyl1nDK1JNxj1/w9QXW6HK97y4PLZJv5fy1EoQ==",
+  "dgSpecHash": "3uorxKomZeWYDc+Ogr+6mdhoj2lgxMu2ZP/G9Wbdrxj5rgFzjpgM0We6tMpJH8nvf3UVMeTnKu1bArBdtRkH4g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\bsousou\\Documents\\GitHub\\CpuAndGpuMetrics\\WINDOWS\\CpuAndGpuMetrics\\CpuAndGpuMetrics\\CpuAndGpuMetrics.csproj",
+  "projectFilePath": "/home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/CpuAndGpuMetrics/CpuAndGpuMetrics/CpuAndGpuMetrics.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\bsousou\\.nuget\\packages\\microsoft.win32.systemevents\\7.0.0\\microsoft.win32.systemevents.7.0.0.nupkg.sha512",
-    "C:\\Users\\bsousou\\.nuget\\packages\\system.configuration.configurationmanager\\7.0.0\\system.configuration.configurationmanager.7.0.0.nupkg.sha512",
-    "C:\\Users\\bsousou\\.nuget\\packages\\system.diagnostics.eventlog\\7.0.0\\system.diagnostics.eventlog.7.0.0.nupkg.sha512",
-    "C:\\Users\\bsousou\\.nuget\\packages\\system.diagnostics.performancecounter\\7.0.0\\system.diagnostics.performancecounter.7.0.0.nupkg.sha512",
-    "C:\\Users\\bsousou\\.nuget\\packages\\system.drawing.common\\7.0.0\\system.drawing.common.7.0.0.nupkg.sha512",
-    "C:\\Users\\bsousou\\.nuget\\packages\\system.security.cryptography.protecteddata\\7.0.0\\system.security.cryptography.protecteddata.7.0.0.nupkg.sha512",
-    "C:\\Users\\bsousou\\.nuget\\packages\\system.security.permissions\\7.0.0\\system.security.permissions.7.0.0.nupkg.sha512",
-    "C:\\Users\\bsousou\\.nuget\\packages\\system.windows.extensions\\7.0.0\\system.windows.extensions.7.0.0.nupkg.sha512"
+    "/home/matrox/.nuget/packages/microsoft.win32.systemevents/7.0.0/microsoft.win32.systemevents.7.0.0.nupkg.sha512",
+    "/home/matrox/.nuget/packages/system.configuration.configurationmanager/7.0.0/system.configuration.configurationmanager.7.0.0.nupkg.sha512",
+    "/home/matrox/.nuget/packages/system.diagnostics.eventlog/7.0.0/system.diagnostics.eventlog.7.0.0.nupkg.sha512",
+    "/home/matrox/.nuget/packages/system.diagnostics.performancecounter/7.0.0/system.diagnostics.performancecounter.7.0.0.nupkg.sha512",
+    "/home/matrox/.nuget/packages/system.drawing.common/7.0.0/system.drawing.common.7.0.0.nupkg.sha512",
+    "/home/matrox/.nuget/packages/system.security.cryptography.protecteddata/7.0.0/system.security.cryptography.protecteddata.7.0.0.nupkg.sha512",
+    "/home/matrox/.nuget/packages/system.security.permissions/7.0.0/system.security.permissions.7.0.0.nupkg.sha512",
+    "/home/matrox/.nuget/packages/system.windows.extensions/7.0.0/system.windows.extensions.7.0.0.nupkg.sha512",
+    "/home/matrox/.nuget/packages/microsoft.netcore.app.ref/7.0.14/microsoft.netcore.app.ref.7.0.14.nupkg.sha512",
+    "/home/matrox/.nuget/packages/microsoft.aspnetcore.app.ref/7.0.14/microsoft.aspnetcore.app.ref.7.0.14.nupkg.sha512"
   ],
   "logs": []
 }
