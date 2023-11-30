@@ -138,6 +138,7 @@ namespace CpuAndGpuMetrics
 
             if (type == GpuType.Nvidia)
             {
+                this.CpuUsage = CpuUsage;
                 this.GpuOverall = gpuMetrics[0];
                 this.VideoDecode0 = gpuMetrics[1];
                 this.VideoEncode = gpuMetrics[2];
@@ -146,6 +147,7 @@ namespace CpuAndGpuMetrics
 
             else if (type == GpuType.Intel)
             {
+                this.CpuUsage = CpuUsage;
                 this.Gpu3D = gpuMetrics[0];
                 this.VideoDecode0 = gpuMetrics[1];
                 this.VideoDecode0 = gpuMetrics[2];

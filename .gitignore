@@ -8,6 +8,7 @@
 **/OfficialSources/
 **/boogieSources/
 *.mp4
+*.xlsx
 
 # User-specific files
 *.rsuser

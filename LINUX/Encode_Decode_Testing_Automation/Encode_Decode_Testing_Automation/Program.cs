@@ -17,7 +17,8 @@ class Program
     /// <summary>
     /// Setting the path
     /// </summary>
-    readonly private static string TESTSOURCESPATH = @"OfficialSources";
+    readonly private static string TESTSOURCESPATH = FFmpegProcess.TESTSOURCESPATH;
+
     //SPECIFY PATH WHERE YOU WOULD LIKE THE EXCEL FILES TO BE DUMPED
     readonly private static string EXCELDIRECTORY = @"./";
 
@@ -25,10 +26,18 @@ class Program
     // NEED TO FIND A WAY TO AUTO DETECT GPU / OR AT LEAST MANUALLY INPUT ; ADD CODE AT "GpuType.cs"
     private static GpuType gpu = GpuType.Nvidia;
 
-    private static int testno = 1;
+    private static int testNo = 1;
     private static bool isHardwareAccel = false;
 
     //Combining file name and path
+    private static string fileName = $"AutomatedData_{gpu}.xlsx";
+    private static string filePath = Path.Combine(EXCELDIRECTORY, fileName);
+
+    /// <summary>
+    /// Main entry point of the Automation program
+    /// </summary>
+    static void Main()
+    {    
     private static string fileName = $"AutomatedData_#{testno}.xlsx";
     private static string filePath = Path.Combine(EXCELDIRECTORY, fileName);
 
@@ -66,7 +75,7 @@ class Program
                 // Start data collection
                 if (p != null)
                 {
-                    Thread.Sleep(1500); // variable 1-2 secs (experiment)
+                    Thread.Sleep(2000); // variable 1-2 secs (experiment)
 
                     container.PopulateData(gpu);
                     Console.WriteLine("Data Populated.");
@@ -101,8 +110,12 @@ class Program
 
                 // DEBUG
                 container.DisplayValues();
+
                 // Write to Excel
                 DataListToExcel(videoPerfData, filePath);
+
+                // Increment 
+                testNo++;
             }
 
         }
@@ -162,22 +175,17 @@ class Program
 
         int testCounts = 1; // 1st row is header; Data start from the 2nd
 
+        // Loop through each tuple in the PerfomanceMetrics list to write its data onto each row of the excel
         foreach (Tuple<Video, PerformanceMetricsContainer, HardwareAccelerator> tupleEntry in videoPerfData)
         {
-            Video video; PerformanceMetricsContainer container; HardwareAccelerator hwaccel;
-            video = tupleEntry.Item1;
-            container = tupleEntry.Item2;
-            hwaccel = tupleEntry.Item3;
+            Video video = tupleEntry.Item1;
+            PerformanceMetricsContainer container = tupleEntry.Item2;
+            HardwareAccelerator hwaccel = tupleEntry.Item3;
 
             WriteToExcel(worksheet, video, container, hwaccel.HardwareAccel.ToString(), hwaccel.Gpu, testCounts++);
         }
 
-        ////Converting entire ExcelPackage to a byte array (prep for writing data to excel)
-        //byte[] draft1 = CPUandGPU_Decode.GetAsByteArray();
-
         ////Writes the array to a file at the specified path
-        //File.WriteAllBytes(file_path, draft1);
-
         byte[] fileBytes = CPUandGPU_Decode.GetAsByteArray();
         File.WriteAllBytes(file_path, fileBytes);
 

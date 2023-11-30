@@ -17,10 +17,10 @@ namespace CpuAndGpuMetrics
     public class FFmpegProcess
     {
         /// <summary>Relative path of the test source folder.</summary>
-        private readonly static string TESTSOURCESPATH = @"OfficialSources";
+        public readonly static string TESTSOURCESPATH = @"OfficialSources";
 
         /// <summary>Absolute path of ffmpeg.exe.</summary>
-        private readonly static string FFMPEGPATH = "/usr/bin/ffmpeg";
+        public readonly static string FFMPEGPATH = "/usr/bin/ffmpeg";
 
         /// <summary>Filename of video to be decoded.</summary>CpuAndGpuMetrics/CpuAndGpuMetricsing filename;
 
