@@ -18,18 +18,20 @@ class Program
     /// <summary>
     /// Setting the path
     /// </summary>
-    readonly private static string TESTSOURCESPATH = @"..\..\..\OfficialSources";
+    readonly private static string TESTSOURCESPATH = FFmpegProcess.TESTSOURCESPATH;
+
     //SPECIFY PATH WHERE YOU WOULD LIKE THE EXCEL FILES TO BE DUMPED
-    readonly private static string EXCELDIRECTORY = @"..\..\..\";
+    readonly private static string EXCELDIRECTORY = @"./";
 
     // Set Gpu type (Placeholder) and type of hwaccels based on that gpu
     // NEED TO FIND A WAY TO AUTO DETECT GPU / OR AT LEAST MANUALLY INPUT ; ADD CODE AT "GpuType.cs"
     private static GpuType gpu = GpuType.Nvidia;
 
-    private static int testno = 1;
+    private static int testNo = 1;
+    private static bool isHardwareAccel = false;
 
     //Combining file name and path
-    private static string fileName = $"AutomatedData_#{++testno}.xlsx";
+    private static string fileName = $"AutomatedData_{gpu}.xlsx";
     private static string filePath = Path.Combine(EXCELDIRECTORY, fileName);
 
     /// <summary>
@@ -97,6 +99,8 @@ class Program
             }
             // DEBUG
             DataListToExcel(videoPerfData, filePath);
+
+            testNo++;
         }
     }
 
