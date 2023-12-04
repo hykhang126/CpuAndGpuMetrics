@@ -28,7 +28,7 @@ class Program
     private static GpuType gpu = GpuType.Nvidia;
 
     private static int testNo = 1;
-    private static bool isHardwareAccel = false;
+    private static bool isHardwareAccel = true;
 
     //Combining file name and path
     private static string fileName = $"AutomatedData_{gpu}.xlsx";
@@ -231,7 +231,7 @@ class Program
         (ExcelWorksheet worksheet, ExcelWorksheet worksheetEnc,
         Video video, PerformanceMetricsContainer container, string hardwareAccel,  GpuType? gpu, int testCounts, bool writeToEncWorksheet = false)
     {
-        //Can add if-else statements to change the color of the cells depending on chroma and color format
+        //Can add if-else statements to change the color of the ceworksheetEnc,lls depending on chroma and color format
 
         //Video Information from Video obj
         string codec = video.CodecExt.ToString();

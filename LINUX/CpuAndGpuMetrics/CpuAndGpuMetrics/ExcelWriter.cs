@@ -1,11 +1,6 @@
 using OfficeOpenXml;
-using System.Data;
-
 //main namespace for EPPlus library (allows us to manipulate the excel file)
 using System.Drawing;
-using System.Dynamic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 
 namespace CpuAndGpuMetrics
 {
@@ -17,13 +12,13 @@ namespace CpuAndGpuMetrics
 
         public string Name { get; set; } = "Default";
 
-        public ExcelPackage CPUandGPUExcelPack = new();
+        public static ExcelPackage CPUandGPUExcelPack = new();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="sheetName"></param>
-		/// <returns></returns>
+		/// <returns></returns> 
 		public ExcelWorksheet CheckExcelWorksheetExist(string sheetName)
 		{
 			try
@@ -51,7 +46,7 @@ namespace CpuAndGpuMetrics
 			ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
 			// adding new worksheets for data to be written to
-			var worksheet = CheckExcelWorksheetExist($"Automated {Name} {TestNbr} Data");
+			var worksheet = CheckExcelWorksheetExist($"Automated {Name} Data");
 
 			// Resizing the columns 
 			worksheet.Column(1).Width = 5;
@@ -164,7 +159,7 @@ namespace CpuAndGpuMetrics
 			float? vidDec2 = container.VideoDecode2;
 
 			// Information from Misc. obj
-			string OS = "Windows"; // HARD-CODED
+			string OS = "Linux"; // HARD-CODED
 			string? gpuType = gpu?.ToString();
 			string decodeMethod = (hardwareAccel == "none") ? "CPU Decoding" : "GPU Decoding";
 			string hwaccel = hardwareAccel;
@@ -187,7 +182,7 @@ namespace CpuAndGpuMetrics
 			worksheet.Cells[newRow, 13].Value = gpu3d;
 			worksheet.Cells[newRow, 14].Value = vidDec0;
 			worksheet.Cells[newRow, 15].Value = vidDec1;
-			worksheet.Cells[newRow, 16].Value = vidDec2;
+			worksheet.Cells[newRow, 16].Value = vidDec2.HasValue ? vidDec2 : "N/A";
 
 			//More formatting: Coloring the hwaccel, codec, and chroma for further organization
 			if (hwaccel == "Cuda")
@@ -252,7 +247,7 @@ namespace CpuAndGpuMetrics
         public ExcelWriterEncodeOnly(int TestNbr)
         {
 			this.TestNbr = TestNbr;
-			this.Name = "Decode";
+			this.Name = "Encode";
 			this.Headers = 
 			[
             "No.", "OS", "GPU Type", "Decode Method", "Hwaccel", "Codec", "Chroma", "Bit-depth",

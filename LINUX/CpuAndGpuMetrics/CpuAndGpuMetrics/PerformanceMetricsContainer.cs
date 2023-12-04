@@ -137,8 +137,10 @@ namespace CpuAndGpuMetrics
                 this.CpuUsage = CpuUsage;
                 this.GpuOverall = gpuMetrics[0];
                 this.VideoDecode0 = gpuMetrics[1];
+                this.VideoDecode1 = 0;
+                this.VideoDecode2 = 0;
                 this.VideoEncode = gpuMetrics[2];
-                this.GpuCopy = 0;
+                this.GpuCopy = -1;
             } 
 
             else if (type == GpuType.Intel)
@@ -146,9 +148,10 @@ namespace CpuAndGpuMetrics
                 this.CpuUsage = CpuUsage;
                 this.Gpu3D = gpuMetrics[0];
                 this.VideoDecode0 = gpuMetrics[1];
-                this.VideoDecode0 = gpuMetrics[2];
+                this.VideoDecode1 = gpuMetrics[2];
+                this.VideoDecode2 = null;
                 this.VideoEncode = gpuMetrics[3];
-                this.GpuCopy = 0;
+                this.GpuCopy = -1;
             }
         }
 

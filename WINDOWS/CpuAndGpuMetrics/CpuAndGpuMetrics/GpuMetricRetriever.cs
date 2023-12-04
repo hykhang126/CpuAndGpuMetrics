@@ -80,10 +80,11 @@ namespace CpuAndGpuMetrics
                 float d3Utilization = d3Values.Sum();
                 float decodeUtilization = decodeValues.Sum();
                 float copyUtilization = copyValues.Sum();
+                float encodeUtilization = encodeValues.Sum();
                 Console.WriteLine($"3d: {d3Utilization}, decode: {decodeUtilization}, copy: {copyUtilization}", 
                     d3Utilization, decodeUtilization, copyUtilization);
 
-                return new float[] { d3Utilization, copyUtilization, decodeUtilization, };
+                return new float[] { d3Utilization, copyUtilization, decodeUtilization, encodeUtilization};
             }
             catch (Exception ex)
             {
