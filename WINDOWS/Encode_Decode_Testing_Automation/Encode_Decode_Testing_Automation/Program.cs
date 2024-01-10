@@ -1,14 +1,6 @@
 ﻿using CpuAndGpuMetrics;
-using OfficeOpenXml;
-//main namespace for EPPlus library (allows us to manipulate the excel file)
-using System.Xml.Schema;
 using static CpuAndGpuMetrics.FFmpegProcess;
-using static CpuAndGpuMetrics.HardwareAccelerator;
 using static CpuAndGpuMetrics.Video;
-using System;
-using System.Runtime.CompilerServices;
-using System.Collections;
-using System.Drawing;
 
 /// <summary>
 /// Class for the main entry point of the program
@@ -16,63 +8,87 @@ using System.Drawing;
 class Program
 {
     /// <summary>
-    /// Setting the path
+    /// Set the path of the sources
     /// </summary>
-    readonly private static string TESTSOURCESPATH = FFmpegProcess.TESTSOURCESPATH;
+    readonly private static string TESTSOURCESPATH = FilePath.TESTSOURCESPATH;
 
-    //SPECIFY PATH WHERE YOU WOULD LIKE THE EXCEL FILES TO BE DUMPED
-    readonly private static string EXCELDIRECTORY = @"./";
+    /// <summary>
+    /// SPECIFY PATH WHERE YOU WOULD LIKE THE EXCEL FILES TO BE DUMPED
+    /// </summary>
+    readonly private static string EXCELDIRECTORY = FilePath.EXCELDIRECTORY;
+
+    /// <summary>
+    /// Name of the excel file
+    /// </summary>
+    /// <value></value>
+    readonly private static string EXCEL_FILE_NAME = ProgramSettings.EXCEL_FILE_NAME;
+
+    /// <summary>
+    /// Path to the excel file
+    /// </summary>
+    /// <returns></returns>
+    readonly private static string EXCEL_FILE_PATH = Path.Combine(EXCELDIRECTORY, EXCEL_FILE_NAME);
 
     // Set Gpu type (Placeholder) and type of hwaccels based on that gpu
     // NEED TO FIND A WAY TO AUTO DETECT GPU / OR AT LEAST MANUALLY INPUT ; ADD CODE AT "GpuType.cs"
-    private static GpuType gpu = GpuType.Nvidia;
-
-    private static int testNo = 1;
-    private static bool isHardwareAccel = true;
-
-    //Combining file name and path
-    private static string fileName = $"AutomatedData_{gpu}.xlsx";
-    private static string filePath = Path.Combine(EXCELDIRECTORY, fileName);
+    private static GpuType gpu = ProgramSettings.GPU;
 
     /// <summary>
-    /// Main entry point of the Automation program
+    /// Indicate whether hardware decode is on or not
     /// </summary>
-    static void Main()
+    private static bool isDecodeAccel = ProgramSettings.DEFAULT_IS_DECODE_ACCEL_ON;
+
+    /// <summary>
+    /// Numbering the amount of test runs being carried out
+    /// </summary>
+    private static int testNbr = 1;
+
+    static void ExecuteAutomatedTest()
     {
         // Set Sources path
         string[] fileNames = Directory.GetFiles(TESTSOURCESPATH);
 
         // Create a List of Tuples which store the Video info., it's performance and accel type
-        List<Tuple<Video, PerformanceMetricsContainer, HardwareAccelerator>> videoPerfData = new();
+        List<Tuple<Video, PerformanceMetricsContainer, HardwareAccelerator>> videoPerfData = [];
 
+        // Declare the excel writer
+        ExcelWriter excelWriter;
+
+        // Convert all file names in source folder to an array of string tokens
         for (int i = 0; i < fileNames.Length; i++)
         {
             fileNames[i] = Path.GetFileName(fileNames[i]);
         }
 
+        // Loop through all sources files with all the hardware accelerator
         foreach (var hardwareAccel in HardwareAccelerator.HardwareAcceleratorChooser(gpu))
         {
             foreach (var filename in fileNames)
             {
                 Video video = FilenameToVideo(filename);
+
                 PerformanceMetricsContainer container = new();
-                HardwareAccelerator hwaccel = new(hardwareAccel, gpu, isHardwareAccel);
+
+                // Create the hardware accelerator class containing info on hwaccel type, gpu type and whether hwaccel is on or off
+                HardwareAccelerator hwaccel = new(hardwareAccel, gpu, isDecodeAccel);
 
                 FFmpegProcess ffmpegProcess = FilenameToFFmpegProcess(filename, video, hwaccel);
-                var p = ffmpegProcess.StartProcess(hwaccel.IsHardwareAccel);
+                
+                // Start the ffmpeg process
+                var p = ffmpegProcess.StartProcess(HardwareAccelerator.IsDecodeAccel);
 
+                // Start data collection
                 if (p != null)
                 {
-                    Thread.Sleep(1500); // variable 1-2 secs (experiment)
                     container.PopulateData(gpu);
                     Console.WriteLine("Data Populated.");
+
                     Tuple<Video, PerformanceMetricsContainer, HardwareAccelerator> tuple = new(video, container, hwaccel);
                     videoPerfData.Add(tuple);
                 }
 
-                //p?.WaitForExit();
-
-                string fps = "NOT FOUND";
+                // Start gathering fps value using process stderr
+                float fps = -1;
                 while ( p!=null && !p.StandardError.EndOfStream)
                 {
                     string? line = p.StandardError.ReadLine();
@@ -83,277 +99,58 @@ class Program
 
                         string fpsString = line.ToLower()[(fpsIndex + 4)..];
 
-                        if (fpsString.Contains('q')) fps = fpsString[..(fpsString.IndexOf("q") - 1)].Trim();
+                        if (fpsString.Contains('q')) 
+                        {
+                            fpsString = fpsString[..(fpsString.IndexOf("q") - 1)].Trim();
+                            fps = float.TryParse(fpsString, out float f) ? float.Parse(fpsString) : fps;
+                        }
                     }
                 }
+                container.FramesPerSecond = fps;
 
-                if (fps != "NOT FOUND") container.FramesPerSecond = float.Parse(fps);
-                else container.FramesPerSecond = -1.0f;
-
+                // End process if not already ended
                 if (p != null && !p.HasExited)
                 {
                     p.Kill();
                 }
 
-                //container.DisplayValues();
-            }
-            // DEBUG
-            DataListToExcel(videoPerfData, filePath);
+                // Write to Excel
+                excelWriter = (HardwareAccelerator.IsDecodeAccel) ? new ExcelWriterDecodeOnly(testNbr) : new ExcelWriterEncodeOnly(testNbr);
+                excelWriter.DataListToExcel(videoPerfData, EXCEL_FILE_PATH);
 
-            testNo++;
+
+
+                // DEBUG
+                container.DisplayValues();
+            }
         }
+        // Increment the counter for test type's numbering
+        testNbr++;
     }
 
     /// <summary>
-    /// Receive a List of tuples data to convert them into an excel sheet
+    /// Main entry point of the Automation program
     /// </summary>
-    /// <param name="videoPerfData"></param>
-    /// <param name="file_path"></param>
-    static void DataListToExcel
-        (List<Tuple<Video, PerformanceMetricsContainer, HardwareAccelerator>> videoPerfData, 
-        string file_path)
+    static void Main()
     {
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        bool continueTest;
 
-        //Creating new excel package named CPUandGPU_Decode
-        using ExcelPackage CPUandGPU_Decode = new ExcelPackage();
-
-        //adding new worksheets for data to be written to
-        ExcelWorksheet worksheet = CPUandGPU_Decode.Workbook.Worksheets.Add("Automated Decode Data");
-        ExcelWorksheet worksheetEnc = CPUandGPU_Decode.Workbook.Worksheets.Add("Automated Encode Data");
-
-
-        //Everything will be done twice in order to format both sheets
-        //Creating the Headers
-        string[] headers = new string[]
+        do 
         {
-        "No.", "OS", "GPU Type", "Decode Method", "Hwaccel", "Codec", "Chroma", "Bit-depth",
-        "Resolution", "Final FPS", "CPU Overall", "GPU Overall",
-        "GPU 3D", "Video Decode 0", "Video Decode 1", "Video Decode 2"
-        };
+            // Output current OS
+            Console.WriteLine("---Current OS: " + ProgramSettings.CURRENT_OS.ToString());
+            // Insert Input to continue program
+            Console.WriteLine(" Continue program? (true or false)");
+            continueTest = Convert.ToBoolean(Console.ReadLine());
+            if (!continueTest) return;
 
-        string[] headers_enc = new string[]
-        {
-        "No.", "OS", "GPU Type", "Decode Method", "Hwaccel", "Codec", "Chroma", "Bit-depth",
-        "Resolution", "Final FPS", "CPU Overall", "GPU Overall",
-        "GPU 3D", "Video Decode 0", "Video Decode 1", "Video Decode 2", "Video Encode"
-        };
+            // Then choose hwaccel on or off
+            Console.WriteLine(" DecodeAccel on or off? (on or off)");
+            string? decodeAccelIn = Console.ReadLine();
+            isDecodeAccel = (decodeAccelIn == "on");
 
-        //Resizing the columns 
-        worksheet.Column(1).Width = 5;
-        worksheetEnc.Column(1).Width = 5;
-
-        for (int col = 2; col < headers.Length + 1; col++)
-        {
-            worksheet.Column(col).Width = 18;
+            ExecuteAutomatedTest();
         }
-        
-        for (int col = 2; col < headers_enc.Length + 1; col++)
-        {
-            worksheetEnc.Column(col).Width = 18;
-        }
-
-        //Formatting the Excel sheet
-        if (worksheet.Dimension == null)
-        {
-            for (int i = 0; i < headers.Length; i++)
-            {
-                worksheet.Cells[1, i + 1].Value = headers[i];
-
-                //Centering the headers
-                worksheet.Cells[1, i + 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-
-                //Changing color of headers row to grey using EPPlus
-                worksheet.Cells[1, i + 1].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                worksheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-
-            }
-        }
-        if (worksheetEnc.Dimension == null)
-        {
-            for (int i = 0; i < headers_enc.Length; i++)
-            {
-                worksheetEnc.Cells[1, i + 1].Value = headers_enc[i];
-
-                //Centering the headers
-                worksheetEnc.Cells[1, i + 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-
-                //Changing color of headers row to grey using EPPlus
-                worksheetEnc.Cells[1, i + 1].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                worksheetEnc.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-
-            }
-        }
-
-        //Adding filters to headers
-        worksheet.Cells[1, 1, 1, headers.Length].AutoFilter = true;
-        worksheetEnc.Cells[1, 1, 1, headers.Length].AutoFilter = true;
-
-        int testCounts = 1; // 1st row is header; Data start from the 2nd
-
-        foreach (Tuple<Video, PerformanceMetricsContainer, HardwareAccelerator> tupleEntry in videoPerfData)
-        {
-            Video video; PerformanceMetricsContainer container; HardwareAccelerator hwaccel;
-            video = tupleEntry.Item1;
-            container = tupleEntry.Item2;
-            hwaccel = tupleEntry.Item3;
-
-            WriteToExcel(worksheet, worksheetEnc, video, container, hwaccel.HardwareAccel.ToString(), hwaccel.Gpu, testCounts++);
-            if (container.VideoEncode.HasValue)
-            {
-                WriteToExcel(worksheetEnc, worksheetEnc, video, container, hwaccel.HardwareAccel.ToString(), hwaccel.Gpu, testCounts++);
-            }
-        }
-
-        ////Converting entire ExcelPackage to a byte array (prep for writing data to excel)
-        //byte[] draft1 = CPUandGPU_Decode.GetAsByteArray();
-
-        ////Writes the array to a file at the specified path
-        //File.WriteAllBytes(file_path, draft1);
-
-        byte[] fileBytes = CPUandGPU_Decode.GetAsByteArray();
-        File.WriteAllBytes(file_path, fileBytes);
-
-
-        Console.WriteLine("Data successfully written to Excel.");
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="worksheet"></param>
-    /// <param name="video"></param>
-    /// <param name="container"></param>
-    /// <param name="hardwareAccel"></param>
-    /// <param name="gpu"></param>
-    /// <param name="testCounts"></param>
-    static void WriteToExcel
-        (ExcelWorksheet worksheet, ExcelWorksheet worksheetEnc,
-        Video video, PerformanceMetricsContainer container, string hardwareAccel,  GpuType? gpu, int testCounts, bool writeToEncWorksheet = false)
-    {
-        //Can add if-else statements to change the color of the ceworksheetEnc,lls depending on chroma and color format
-
-        //Video Information from Video obj
-        string codec = video.CodecExt.ToString();
-        string chroma = video.ChromaExt.ToString();
-        string bitDepth = video.BitDepthExt.ToString();
-        string resolution = video.ResolutionExt.ToString();
-
-        // From container obj
-        //Data we are collecting
-        float? finalFPS = container.FramesPerSecond;
-        float? cpuUsage = container.CpuUsage;
-        float? gpuUsage = container.GpuOverall;
-        float? gpu3d = container.Gpu3D;
-        float? vidDec0 = container.VideoDecode0;
-        float? vidDec1 = container.VideoDecode1;
-        float? vidDec2 = container.VideoDecode2;
-        float? vidEnc = container.VideoEncode;
-
-        // Information from Misc. obj
-        string OS = "Windows"; // HARD-CODED
-        string? gpuType = gpu?.ToString();
-        string decodeMethod = (hardwareAccel == "none") ? "CPU Decoding" : "GPU Decoding";
-        string hwaccel = hardwareAccel;
-        int newRow = testCounts + 1;
-
-        //Organizing the Column headers into their correct positions
-        worksheet.Cells[newRow, 1].Value = testCounts;
-        worksheet.Cells[newRow, 2].Value = OS;
-        worksheet.Cells[newRow, 3].Value = gpuType;
-        worksheet.Cells[newRow, 4].Value = decodeMethod;
-        worksheet.Cells[newRow, 5].Value = hwaccel;
-        worksheet.Cells[newRow, 6].Value = codec;
-        worksheet.Cells[newRow, 7].Value = chroma;
-        worksheet.Cells[newRow, 8].Value = bitDepth;
-        worksheet.Cells[newRow, 9].Value = resolution;
-
-        worksheet.Cells[newRow, 10].Value = finalFPS;
-        worksheet.Cells[newRow, 11].Value = cpuUsage;
-        worksheet.Cells[newRow, 12].Value = gpuUsage;
-        worksheet.Cells[newRow, 13].Value = gpu3d;
-        worksheet.Cells[newRow, 14].Value = vidDec0;
-        worksheet.Cells[newRow, 15].Value = vidDec1;
-        worksheet.Cells[newRow, 16].Value = vidDec2;
-
-        if(writeToEncWorksheet)
-        {
-            //Organizing the Column headers into their correct positions
-            worksheet.Cells[newRow, 1].Value = testCounts;
-            worksheet.Cells[newRow, 2].Value = OS;
-            worksheet.Cells[newRow, 3].Value = gpuType;
-            worksheet.Cells[newRow, 4].Value = decodeMethod;
-            worksheet.Cells[newRow, 5].Value = hwaccel;
-            worksheet.Cells[newRow, 6].Value = codec;
-            worksheet.Cells[newRow, 7].Value = chroma;
-            worksheet.Cells[newRow, 8].Value = bitDepth;
-            worksheet.Cells[newRow, 9].Value = resolution;
-
-            worksheet.Cells[newRow, 10].Value = finalFPS;
-            worksheet.Cells[newRow, 11].Value = cpuUsage;
-            worksheet.Cells[newRow, 12].Value = gpuUsage;
-            worksheet.Cells[newRow, 13].Value = gpu3d;
-            worksheet.Cells[newRow, 14].Value = vidDec0;
-            worksheet.Cells[newRow, 15].Value = vidDec1;
-            worksheet.Cells[newRow, 16].Value = vidDec2;
-            worksheetEnc.Cells[newRow, 17].Value = vidEnc;
-        }
-
-
-        //More formatting: Coloring the hwaccel, codec, and chroma for further organization
-        if (hwaccel == "Cuda")
-        {
-            worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSlateGray);
-        }
-        else if (hwaccel == "D3D11VA")
-        {
-            worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSteelBlue);
-        }
-        else if (hwaccel == "Vulkan")
-        {
-            worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
-        }
-        else if (hwaccel == "VAAPI")
-        {
-            worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSalmon);
-        }
-        else if (hwaccel == "None")
-        {
-            worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-        }
-        else if (hwaccel == "QSV")
-        {
-            worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSkyBlue);
-        }
-        
-
-        if (codec == "h264" || codec == "H264")
-        {
-            worksheet.Cells[newRow, 6].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            worksheet.Cells[newRow, 6].Style.Fill.BackgroundColor.SetColor(Color.Salmon);
-        }
-        else if (codec == "h265" || codec == "H265")
-        {
-            worksheet.Cells[newRow, 6].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            worksheet.Cells[newRow, 6].Style.Fill.BackgroundColor.SetColor(Color.LightGreen);
-        }
-
-
-        if (chroma == "Subsampling_420")
-        {
-            worksheet.Cells[newRow, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            worksheet.Cells[newRow, 7].Style.Fill.BackgroundColor.SetColor(Color.Green);
-        }
-        else if (chroma == "Subsampling_444")
-        {
-            worksheet.Cells[newRow, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-            worksheet.Cells[newRow, 7].Style.Fill.BackgroundColor.SetColor(Color.Red);
-        }
+        while (continueTest);
     }
 }

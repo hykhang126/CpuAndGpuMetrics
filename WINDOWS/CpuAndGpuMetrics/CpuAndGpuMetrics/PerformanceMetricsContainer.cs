@@ -128,45 +128,82 @@ namespace CpuAndGpuMetrics
         /// Reads performance metrics from the system and populates the relevant fields.
         /// </summary>
         /// <param name="type">The Gpu type (Nvidia or Intel).</param>
-        public void PopulateData(GpuType type)
+        public async void PopulateData(GpuType type)
         {
-            float[] gpuMetrics = GpuMetricRetriever.GetGpuUsage();
+            // Sleep before gathering data
+            Thread.Sleep(1000);
 
-            CpuUsage = CpuMetricRetriever.GetCpuUsage();
+            var CpuUsageTask = CpuMetricRetriever.GetCpuUsage();
+            var gpuMetricsTask = GpuMetricRetriever.GetGpuUsage(type);
 
-            // Khang added these 2 lines -> How can we get all the decode processes? The decode value that we return is only the average
-            Gpu3D = gpuMetrics[0];
+            float CpuUsage = await CpuUsageTask;
+            this.CpuUsage = CpuUsage;
 
-            GpuCopy = gpuMetrics[1];
+            float[] gpuMetrics = await gpuMetricsTask;
 
-            if (type == GpuType.Intel)
+            if (ProgramSettings.CURRENT_OS == OS.Windows)
             {
-                VideoDecode0 = gpuMetrics[2];
-                VideoDecode1 = 0;
-                GpuOverall = new[] { Gpu3D, VideoDecode0, GpuCopy }.Max();
-                VideoEncode = gpuMetrics[3];
-            } 
-            else if (type == GpuType.Nvidia)
-            {
-                VideoDecode0 = VideoDecode1 = (float)(VideoDecode2 = gpuMetrics[2] / 3);
-                GpuOverall = new[] { Gpu3D, VideoDecode0, GpuCopy }.Max();
-                VideoEncode = gpuMetrics[3];
+                // Function returns array in format: float[] { d3Utilization, copyUtilization, decodeUtilization, encodeUtilization }
+                Gpu3D = gpuMetrics[0];
+
+                GpuCopy = gpuMetrics[1];
+
+                if (type == GpuType.Intel)
+                {
+                    VideoDecode0 = gpuMetrics[2];
+                    VideoDecode1 = 0;
+                    GpuOverall = new[] { Gpu3D, VideoDecode0, GpuCopy }.Max();
+                    VideoEncode = gpuMetrics[3];
+                }
+                else if (type == GpuType.Nvidia)
+                {
+                    VideoDecode0 = VideoDecode1 = (float)(VideoDecode2 = gpuMetrics[2] / 3);
+                    GpuOverall = new[] { Gpu3D, VideoDecode0, GpuCopy }.Max();
+                    VideoEncode = gpuMetrics[3];
+                }
             }
+
+            else if (ProgramSettings.CURRENT_OS == OS.Linux) 
+            {
+                if (type == GpuType.Nvidia)
+                {
+                    this.GpuOverall = gpuMetrics[0];
+                    this.VideoDecode0 = gpuMetrics[1];
+                    this.VideoDecode1 = 0;
+                    this.VideoDecode2 = 0;
+                    this.VideoEncode = gpuMetrics[2];
+                    this.GpuCopy = -1;
+                }
+
+                else if (type == GpuType.Intel)
+                {
+                    this.Gpu3D = gpuMetrics[0];
+                    this.VideoDecode0 = gpuMetrics[1];
+                    this.VideoDecode1 = gpuMetrics[2];
+                    this.VideoDecode2 = null;
+                    this.VideoEncode = gpuMetrics[3];
+                    this.GpuCopy = -1;
+                }
+            }
+
+            else this.GpuOverall = gpuMetrics[0];
         }
-        
-        /*
-         public void DisplayValues()
-         {
-             Console.WriteLine("Performance Metrics:");
-             Console.WriteLine($"Frames Per Second: {FramesPerSecond?.ToString() ?? "N/A"}");
-             Console.WriteLine($"GPU Overall: {GpuOverall}");
-             Console.WriteLine($"GPU 3D: {Gpu3D}");
-             Console.WriteLine($"GPU Copy: {GpuCopy}");
-             Console.WriteLine($"Video Decode 0: {VideoDecode0}");
-             Console.WriteLine($"Video Decode 1: {VideoDecode1}");
-             Console.WriteLine($"Video Decode 2: {VideoDecode2?.ToString() ?? "N/A"}");
-             Console.WriteLine($"CPU Usage: {CpuUsage}");
-         }
-        */
+
+        /// <summary>
+        /// Display all varibles' values of the container class
+        /// </summary>
+        public void DisplayValues()
+        {
+            Console.WriteLine("--- Performance Metrics: ---");
+            Console.WriteLine($"Frames Per Second: {FramesPerSecond?.ToString() ?? "N/A"}");
+            Console.WriteLine($"GPU Overall: {GpuOverall}");
+            Console.WriteLine($"GPU 3D: {Gpu3D}");
+            // Console.WriteLine($"GPU Copy: {GpuCopy}");
+            Console.WriteLine($"Video Decode 0: {VideoDecode0}");
+            Console.WriteLine($"Video Decode 1: {VideoDecode1}");
+            Console.WriteLine($"Video Decode 2: {VideoDecode2?.ToString() ?? "N/A"}");
+            Console.WriteLine($"Video Encode: {VideoEncode}");
+            Console.WriteLine($"CPU Usage: {CpuUsage}");
+        }
     }
 }

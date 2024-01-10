@@ -15,6 +15,8 @@ namespace CpuAndGpuMetrics
         /// <returns>A float representing the counter's current reading.</returns>
         public static float GetReading(PerformanceCounter counter, int time)
         {
+            if (ProgramSettings.CURRENT_OS != OS.Windows) return -1.0f;
+
             float value = 0;
             try
             {
