@@ -71,3 +71,15 @@ C:/Users/bsousou/Documents/GitHub/CPUAndGPUMetrics/WINDOWS/CpuAndGpuMetrics/CpuA
 /home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/CpuAndGpuMetrics/CpuAndGpuMetrics/obj/Debug/net7.0/refint/CpuAndGpuMetrics.dll
 /home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/CpuAndGpuMetrics/CpuAndGpuMetrics/obj/Debug/net7.0/CpuAndGpuMetrics.pdb
 /home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/CpuAndGpuMetrics/CpuAndGpuMetrics/obj/Debug/net7.0/ref/CpuAndGpuMetrics.dll
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\bin\Debug\net7.0\CpuAndGpuMetrics.deps.json
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\bin\Debug\net7.0\CpuAndGpuMetrics.dll
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\bin\Debug\net7.0\CpuAndGpuMetrics.pdb
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\obj\Debug\net7.0\CpuAndGpuMetrics.csproj.AssemblyReference.cache
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\obj\Debug\net7.0\CpuAndGpuMetrics.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\obj\Debug\net7.0\CpuAndGpuMetrics.AssemblyInfoInputs.cache
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\obj\Debug\net7.0\CpuAndGpuMetrics.AssemblyInfo.cs
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\obj\Debug\net7.0\CpuAndGpuMetrics.csproj.CoreCompileInputs.cache
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\obj\Debug\net7.0\CpuAndGpuMetrics.dll
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\obj\Debug\net7.0\refint\CpuAndGpuMetrics.dll
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\obj\Debug\net7.0\CpuAndGpuMetrics.pdb
+C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\CpuAndGpuMetrics\CpuAndGpuMetrics\obj\Debug\net7.0\ref\CpuAndGpuMetrics.dll

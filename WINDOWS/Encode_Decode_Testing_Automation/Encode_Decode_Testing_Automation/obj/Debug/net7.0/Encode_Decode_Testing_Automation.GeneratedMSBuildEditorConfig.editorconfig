@@ -8,6 +8,4 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Encode_Decode_Testing_Automation
-build_property.ProjectDir = /home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/Encode_Decode_Testing_Automation/Encode_Decode_Testing_Automation/
-build_property.EnableComHosting = 
-build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.ProjectDir = C:\Users\tester\Desktop\CpuAndGpuMetrics\CpuAndGpuMetrics\WINDOWS\Encode_Decode_Testing_Automation\Encode_Decode_Testing_Automation\

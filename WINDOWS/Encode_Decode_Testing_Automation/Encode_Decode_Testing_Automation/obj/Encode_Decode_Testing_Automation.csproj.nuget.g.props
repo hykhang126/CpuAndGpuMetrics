@@ -4,18 +4,18 @@
     <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
-    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/home/matrox/.nuget/packages/</NuGetPackageRoot>
-    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/home/matrox/.nuget/packages/</NuGetPackageFolders>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\tester\.nuget\packages\</NuGetPackageFolders>
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
-    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.8.0</NuGetToolVersion>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">6.7.0</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <SourceRoot Include="/home/matrox/.nuget/packages/" />
+    <SourceRoot Include="C:\Users\tester\.nuget\packages\" />
   </ItemGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Import Project="$(NuGetPackageRoot)nservicebus.metrics.performancecounters/5.0.0/build/NServiceBus.Metrics.PerformanceCounters.props" Condition="Exists('$(NuGetPackageRoot)nservicebus.metrics.performancecounters/5.0.0/build/NServiceBus.Metrics.PerformanceCounters.props')" />
+    <Import Project="$(NuGetPackageRoot)nservicebus.metrics.performancecounters\5.0.0\build\NServiceBus.Metrics.PerformanceCounters.props" Condition="Exists('$(NuGetPackageRoot)nservicebus.metrics.performancecounters\5.0.0\build\NServiceBus.Metrics.PerformanceCounters.props')" />
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgNServiceBus Condition=" '$(PkgNServiceBus)' == '' ">/home/matrox/.nuget/packages/nservicebus/8.0.0</PkgNServiceBus>
+    <PkgNServiceBus Condition=" '$(PkgNServiceBus)' == '' ">C:\Users\tester\.nuget\packages\nservicebus\8.0.0</PkgNServiceBus>
   </PropertyGroup>
 </Project>

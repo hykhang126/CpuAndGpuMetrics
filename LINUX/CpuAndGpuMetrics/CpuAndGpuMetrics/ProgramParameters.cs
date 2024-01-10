@@ -12,13 +12,24 @@ namespace CpuAndGpuMetrics
         /// <summary>Absolute path of ffmpeg.exe.</summary>
         public readonly static string FFMPEGPATH = "/usr/bin/ffmpeg";
 
-        //SPECIFY PATH WHERE YOU WOULD LIKE THE EXCEL FILES TO BE DUMPED
+        /// <summary>
+        /// SPECIFY PATH WHERE YOU WOULD LIKE THE EXCEL FILES TO BE DUMPED
+        /// </summary>
         public readonly static string EXCELDIRECTORY = @"./";
 
+        /// <summary>
+        /// HARD-CODED GPU TYPE
+        /// </summary>
         public readonly static GpuType GPU = GpuType.Nvidia;
 
+        /// <summary>
+        /// EXCEL FILE NAME
+        /// </summary>
         public readonly static string FILE_NAME = $"AutomatedData_{GPU}.xlsx";
 
+        /// <summary>
+        /// DEFAULT OPTION FOR HW ACCEL
+        /// </summary>
         public readonly static bool IS_DECODE_ACCEL_ON = true;
     }
 

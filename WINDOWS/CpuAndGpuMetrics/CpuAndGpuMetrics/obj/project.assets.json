@@ -440,24 +440,26 @@
     ]
   },
   "packageFolders": {
-    "/home/matrox/.nuget/packages/": {}
+    "C:\\Users\\tester\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/CpuAndGpuMetrics/CpuAndGpuMetrics/CpuAndGpuMetrics.csproj",
+      "projectUniqueName": "C:\\Users\\tester\\Desktop\\CpuAndGpuMetrics\\CpuAndGpuMetrics\\WINDOWS\\CpuAndGpuMetrics\\CpuAndGpuMetrics\\CpuAndGpuMetrics.csproj",
       "projectName": "CpuAndGpuMetrics",
-      "projectPath": "/home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/CpuAndGpuMetrics/CpuAndGpuMetrics/CpuAndGpuMetrics.csproj",
-      "packagesPath": "/home/matrox/.nuget/packages/",
-      "outputPath": "/home/matrox/Desktop/Githubrepo/CpuAndGpuMetrics/WINDOWS/CpuAndGpuMetrics/CpuAndGpuMetrics/obj/",
+      "projectPath": "C:\\Users\\tester\\Desktop\\CpuAndGpuMetrics\\CpuAndGpuMetrics\\WINDOWS\\CpuAndGpuMetrics\\CpuAndGpuMetrics\\CpuAndGpuMetrics.csproj",
+      "packagesPath": "C:\\Users\\tester\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\tester\\Desktop\\CpuAndGpuMetrics\\CpuAndGpuMetrics\\WINDOWS\\CpuAndGpuMetrics\\CpuAndGpuMetrics\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/matrox/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\tester\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -492,22 +494,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[7.0.14, 7.0.14]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[7.0.14, 7.0.14]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.100/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }
