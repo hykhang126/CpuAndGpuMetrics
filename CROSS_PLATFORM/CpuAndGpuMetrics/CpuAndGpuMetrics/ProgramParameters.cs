@@ -1,6 +1,7 @@
 
 
 using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
 
 namespace CpuAndGpuMetrics
 {
@@ -18,15 +19,21 @@ namespace CpuAndGpuMetrics
         /// <summary>
         /// SPECIFY PATH WHERE YOU WOULD LIKE THE EXCEL FILES TO BE DUMPED
         /// </summary>
-        public readonly static string EXCELDIRECTORY = @"./";
+        public readonly static string EXCELDIRECTORY = @"../../../../../";
     }
 
     public static class ProgramSettings
     {
+        static ProgramSettings()
+        {
+            CURRENT_OS = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? OS.Linux : OS.Windows;
+            GPU = GpuType.Nvidia;
+        }
+
         /// <summary>
         /// HARD-CODED GPU TYPE
         /// </summary>
-        public readonly static GpuType GPU = GpuType.Nvidia;
+        public readonly static GpuType GPU;
 
         /// <summary>
         /// EXCEL FILE NAME
@@ -41,7 +48,7 @@ namespace CpuAndGpuMetrics
         /// <summary>
         /// Current OS of the machine. Default is Windows
         /// </summary>
-        public readonly static OS CURRENT_OS = OS.Windows;
+        public readonly static OS CURRENT_OS;
     }
 
     public enum OS
