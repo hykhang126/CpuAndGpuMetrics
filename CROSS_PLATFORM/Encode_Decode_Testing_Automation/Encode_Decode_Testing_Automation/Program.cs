@@ -39,7 +39,7 @@ class Program
     private static bool isDecodeAccel = ProgramSettings.DEFAULT_IS_DECODE_ACCEL_ON;
 
     /// <summary>
-    /// Numbering the amount of test runs being carried out
+    /// Numbering the amount of test types
     /// </summary>
     private static int testNbr = 1;
 
@@ -145,7 +145,7 @@ class Program
             if (!continueTest) return;
 
             // Then choose hwaccel on or off
-            Console.WriteLine(" DecodeAccel on or off? (on or off)");
+            Console.WriteLine(" DecodeOnly on or off? (on or off)");
             string? decodeAccelIn = Console.ReadLine();
             isDecodeAccel = (decodeAccelIn == "on");
 
