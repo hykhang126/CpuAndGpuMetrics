@@ -1,4 +1,4 @@
-﻿
+
 
 namespace CpuAndGpuMetrics
 {
@@ -77,64 +77,116 @@ namespace CpuAndGpuMetrics
         /// <returns>Video object.</returns>
         public static Video FilenameToVideo(string filename)
         {
-            Codec codec;
-            Chroma chroma;
-            Resolution resolution;
-            BitDepth bitDepth;
-
-            if (filename.Contains("H264") || filename.Contains("h264") || filename.Contains("libx264") || filename.Contains("x264") )
-            {
-                codec = Codec.H264;
-            }
-            else if (filename.Contains("H265") || filename.Contains("h265") || filename.Contains("hevc") || filename.Contains("x265"))
-            { 
-                codec= Codec.H265;
-            }
-            else
-            {
-                codec = Codec.Unknown;
-            }
-
-            if (filename.Contains("420"))
-            {
-                chroma = Chroma.Subsampling_420;
-            }
-            else if (filename.Contains("444"))
-            {
-                chroma = Chroma.Subsampling_444;
-            }
-            else
-            {
-                 chroma = Chroma.Unknown;
-            }
-
-            if (filename.Contains("UHD") || filename.Contains("4k") || filename.Contains("4K"))
-            {
-                resolution = Resolution.UHD;
-            }
-            else if (filename.Contains("HD") || filename.Contains("hd"))
-            {
-                resolution = Resolution.HD;
-            }
-            else 
-            { 
-                resolution = Resolution.Unknown; 
-            }
-
-            if (filename.Contains("8bit") || filename.Contains("b08"))
-            {
-                bitDepth = BitDepth.Bit_8;
-            }
-            else if (filename.Contains("10bit") || filename.Contains("b10"))
-            {  
-                bitDepth = BitDepth.Bit_10; 
-            }
-            else
-            {
-                bitDepth = BitDepth.Unknown;
-            }
+            String lowercaseFilename = filename.ToLower();
+            Codec codec = getCodec(lowercaseFilename);
+            Chroma chroma = getChroma(lowercaseFilename);
+            Resolution resolution = getResolution(lowercaseFilename);
+            BitDepth bitDepth = getBitDepth(lowercaseFilename);
 
             return new Video(codec, chroma, resolution, bitDepth);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="substrings"></param>
+        /// <returns></returns>
+        private static bool containsAny(string filename, string[] substrings)
+        {
+            return substrings.Any(substring => filename.Contains(substring));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        private static Codec getCodec(string filename)
+        {
+            string[] h264indicators = { "h264", "libx264", "x264" };
+            string[] h265indicators = { "h265", "hvec", "x265" };
+
+
+            if (containsAny(filename, h264indicators)) {
+                return Codec.H264;
+            }
+            else if (containsAny(filename, h265indicators))
+            {
+                return Codec.H265;
+            }
+
+            return Codec.Unknown;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        private static Chroma getChroma(string filename)
+        {
+            string[] chroma420 = { "420" };
+            string[] chroma444 = { "444" };
+
+
+            if (containsAny(filename, chroma420))
+            {
+                return Chroma.Subsampling_420;
+            }
+            else if (containsAny(filename, chroma444))
+            {
+                return Chroma.Subsampling_420;
+            }
+
+            return Chroma.Unknown;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        private static Resolution getResolution(string filename)
+        {
+            string[] uhdindicators = { "uhd", "4k" };
+            string[] hdindicators = { "hd" };
+
+
+            if (containsAny(filename, uhdindicators))
+            {
+                return Resolution.UHD;
+            }
+            else if (containsAny(filename, hdindicators))
+            {
+                return Resolution.HD;
+            }
+
+            return Resolution.Unknown;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        private static BitDepth getBitDepth(string filename)
+        {
+            string[] b8indicators = { "8bit", "b08" };
+            string[] b10indicators = { "10bit", "b10" };
+
+
+            if (containsAny(filename, b8indicators))
+            {
+                return BitDepth.Bit_8;
+            }
+            else if (containsAny(filename, b10indicators))
+            {
+                return BitDepth.Bit_10;
+            }
+
+            return BitDepth.Unknown;
         }
 
         /// <summary>
