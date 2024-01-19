@@ -35,12 +35,28 @@ namespace CpuAndGpuMetrics
         /// <returns>An array representing the compatible hardware acceleration types of the given Gpu type.</returns>
         public static HardwareAccel[] HardwareAcceleratorChooser(GpuType? gpu)
         {
-            HardwareAccel[] HardwareAccels = gpu switch
+            HardwareAccel[] HardwareAccels;
+
+            if (ProgramSettings.CURRENT_OS == OS.Linux)
             {
-                GpuType.Nvidia => [HardwareAccel.Cuda, HardwareAccel.VDPAU, HardwareAccel.Vulkan, HardwareAccel.None],
-                GpuType.Intel => [HardwareAccel.QSV, HardwareAccel.VAAPI, HardwareAccel.Vulkan, HardwareAccel.None],
-                _ => [HardwareAccel.None],
-            };
+                HardwareAccels = gpu switch
+                {
+                    GpuType.Nvidia => [HardwareAccel.Cuda, HardwareAccel.VDPAU, HardwareAccel.Vulkan, HardwareAccel.None],
+                    GpuType.Intel => [HardwareAccel.QSV, HardwareAccel.VAAPI, HardwareAccel.Vulkan, HardwareAccel.None],
+                    _ => [HardwareAccel.None],
+                };
+            }
+            else if (ProgramSettings.CURRENT_OS == OS.Windows)
+            {
+                HardwareAccels = gpu switch
+                {
+                    GpuType.Nvidia => [HardwareAccel.Cuda, HardwareAccel.D3D11VA, HardwareAccel.Vulkan, HardwareAccel.None],
+                    GpuType.Intel => [HardwareAccel.QSV, HardwareAccel.D3D11VA, HardwareAccel.Vulkan, HardwareAccel.None],
+                    _ => [HardwareAccel.None],
+                };
+            }
+            else HardwareAccels = [HardwareAccel.None];
+
             return HardwareAccels;
         }
 

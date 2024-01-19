@@ -34,11 +34,6 @@ class Program
     private static GpuType gpu = ProgramSettings.GPU;
 
     /// <summary>
-    /// Indicate whether hardware decode is on or not
-    /// </summary>
-    private static bool isDecodeAccel = ProgramSettings.DEFAULT_IS_DECODE_ACCEL_ON;
-
-    /// <summary>
     /// Numbering the amount of test types
     /// </summary>
     private static int testNbr = 1;
@@ -70,7 +65,7 @@ class Program
                 PerformanceMetricsContainer container = new();
 
                 // Create the hardware accelerator class containing info on hwaccel type, gpu type and whether hwaccel is on or off
-                HardwareAccelerator hwaccel = new(hardwareAccel, gpu, isDecodeAccel);
+                HardwareAccelerator hwaccel = new(hardwareAccel, gpu, ProgramSettings.IS_DECODE_ONLY_ON);
 
                 FFmpegProcess ffmpegProcess = FilenameToFFmpegProcess(filename, video, hwaccel);
                 
@@ -80,45 +75,47 @@ class Program
                 // Start data collection
                 if (p != null)
                 {
+                    Console.WriteLine("...Sleeping in Program.cs...");
+                    Thread.Sleep(3000);
+                    Console.WriteLine("Finish sleeping! \n");
+
                     container.PopulateData(gpu);
                     Console.WriteLine("Data Populated.");
 
                     Tuple<Video, PerformanceMetricsContainer, HardwareAccelerator> tuple = new(video, container, hwaccel);
                     videoPerfData.Add(tuple);
-                }
 
-                // Start gathering fps value using process stderr
-                float fps = -1;
-                while ( p!=null && !p.StandardError.EndOfStream)
-                {
-                    string? line = p.StandardError.ReadLine();
-                    //Console.WriteLine(line);
-                    if (line != null && line.ToLower().Contains("fps"))
+                    // Start gathering fps value using process stderr
+                    float fps = -1;
+                    while (p != null && !p.StandardError.EndOfStream)
                     {
-                        int fpsIndex = line.ToLower().IndexOf("fps");
-
-                        string fpsString = line.ToLower()[(fpsIndex + 4)..];
-
-                        if (fpsString.Contains('q')) 
+                        string? line = p.StandardError.ReadLine();
+                        //Console.WriteLine(line);
+                        if (line != null && line.ToLower().Contains("fps"))
                         {
-                            fpsString = fpsString[..(fpsString.IndexOf("q") - 1)].Trim();
-                            fps = float.TryParse(fpsString, out float f) ? float.Parse(fpsString) : fps;
+                            int fpsIndex = line.ToLower().IndexOf("fps");
+
+                            string fpsString = line.ToLower()[(fpsIndex + 4)..];
+
+                            if (fpsString.Contains('q'))
+                            {
+                                fpsString = fpsString[..(fpsString.IndexOf("q") - 1)].Trim();
+                                fps = float.TryParse(fpsString, out float f) ? float.Parse(fpsString) : fps;
+                            }
                         }
                     }
+                    container.FramesPerSecond = fps;
+
+                    // Write to Excel
+                    excelWriter = (HardwareAccelerator.IsDecodeAccel) ? new ExcelWriterDecodeOnly(testNbr) : new ExcelWriterEncodeOnly(testNbr);
+                    excelWriter.DataListToExcel(videoPerfData, EXCEL_FILE_PATH);
                 }
-                container.FramesPerSecond = fps;
 
                 // End process if not already ended
                 if (p != null && !p.HasExited)
                 {
                     p.Kill();
                 }
-
-                // Write to Excel
-                excelWriter = (HardwareAccelerator.IsDecodeAccel) ? new ExcelWriterDecodeOnly(testNbr) : new ExcelWriterEncodeOnly(testNbr);
-                excelWriter.DataListToExcel(videoPerfData, EXCEL_FILE_PATH);
-
-
 
                 // DEBUG
                 container.DisplayValues();
@@ -147,7 +144,7 @@ class Program
             // Then choose hwaccel on or off
             Console.WriteLine(" DecodeOnly on or off? (on or off)");
             string? decodeAccelIn = Console.ReadLine();
-            isDecodeAccel = (decodeAccelIn == "on");
+            ProgramSettings.IS_DECODE_ONLY_ON = (decodeAccelIn == "on");
 
             ExecuteAutomatedTest();
         }

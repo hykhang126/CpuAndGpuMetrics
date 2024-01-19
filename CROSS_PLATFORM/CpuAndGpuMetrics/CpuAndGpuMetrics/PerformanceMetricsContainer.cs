@@ -130,8 +130,8 @@ namespace CpuAndGpuMetrics
         /// <param name="type">The Gpu type (Nvidia or Intel).</param>
         public async void PopulateData(GpuType type)
         {
-            // Sleep before gathering data
-            Thread.Sleep(1000);
+            //// Sleep before gathering data
+            //Thread.Sleep(1000);
 
             var CpuUsageTask = CpuMetricRetriever.GetCpuUsage();
             var gpuMetricsTask = GpuMetricRetriever.GetGpuUsage(type);
@@ -153,7 +153,7 @@ namespace CpuAndGpuMetrics
                     VideoDecode0 = gpuMetrics[2];
                     VideoDecode1 = 0;
                     GpuOverall = new[] { Gpu3D, VideoDecode0, GpuCopy }.Max();
-                    VideoEncode = gpuMetrics[3];
+                    VideoEncode = (ProgramSettings.IS_DECODE_ONLY_ON)? -1f : VideoDecode0;
                 }
                 else if (type == GpuType.Nvidia)
                 {

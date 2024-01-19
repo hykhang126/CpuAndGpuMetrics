@@ -9,7 +9,7 @@ namespace CpuAndGpuMetrics
     /// </summary>
     static internal class GpuMetricRetriever
     {
-        /// <summary>Time (in ms) before reading GPU usage metrics.</summary>
+        /// <summary>The time to wait (in milliseconds) between initializing and reading the counter for more accuracy.</summary>
         static readonly int TIME = 10;
 
 
@@ -126,8 +126,8 @@ namespace CpuAndGpuMetrics
                 float decodeUtilization = decodeValues.Sum();
                 float copyUtilization = copyValues.Sum();
                 float encodeUtilization = encodeValues.Sum();
-                Console.WriteLine($"3d: {d3Utilization}, decode: {decodeUtilization}, copy: {copyUtilization}",
-                    d3Utilization, decodeUtilization, copyUtilization);
+                //Console.WriteLine($"3d: {d3Utilization}, decode: {decodeUtilization}, copy: {copyUtilization}",
+                //    d3Utilization, decodeUtilization, copyUtilization);
 
                 return new float[] { d3Utilization, copyUtilization, decodeUtilization, encodeUtilization };
             }
