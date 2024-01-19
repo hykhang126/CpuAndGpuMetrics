@@ -37,16 +37,7 @@ namespace CpuAndGpuMetrics
         {
             HardwareAccel[] HardwareAccels;
 
-            if (ProgramSettings.CURRENT_OS == OS.Windows)
-            {
-                HardwareAccels = gpu switch
-                {
-                    GpuType.Nvidia => new[] { HardwareAccel.Cuda, HardwareAccel.D3D11VA, HardwareAccel.Vulkan, HardwareAccel.None },
-                    GpuType.Intel => new[] { HardwareAccel.QSV, HardwareAccel.D3D11VA, HardwareAccel.Vulkan, HardwareAccel.VAAPI, HardwareAccel.None },
-                    _ => new[] { HardwareAccel.None },
-                };
-            }
-            else // if (ProgramSettings.CURRENT_OS == OS.Linux)
+            if (ProgramSettings.CURRENT_OS == OS.Linux)
             {
                 HardwareAccels = gpu switch
                 {
@@ -55,8 +46,16 @@ namespace CpuAndGpuMetrics
                     _ => [HardwareAccel.None],
                 };
             }
-            
-            // Other OS in the future?
+            else if (ProgramSettings.CURRENT_OS == OS.Windows)
+            {
+                HardwareAccels = gpu switch
+                {
+                    GpuType.Nvidia => [HardwareAccel.Cuda, HardwareAccel.D3D11VA, HardwareAccel.Vulkan, HardwareAccel.None],
+                    GpuType.Intel => [HardwareAccel.QSV, HardwareAccel.D3D11VA, HardwareAccel.Vulkan, HardwareAccel.None],
+                    _ => [HardwareAccel.None],
+                };
+            }
+            else HardwareAccels = [HardwareAccel.None];
 
             return HardwareAccels;
         }

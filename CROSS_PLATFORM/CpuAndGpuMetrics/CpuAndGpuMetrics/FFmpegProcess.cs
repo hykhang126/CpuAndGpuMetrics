@@ -119,17 +119,6 @@ namespace CpuAndGpuMetrics
             return new FFmpegProcess(filename, hwaccel, skip);
         }
 
-        private bool IsVideoSkipped()
-        {
-            // Check if this video should be skipped. If not then generate ffmnpeg cmd.
-            if (skip == true || hardwareAccel == HardwareAccel.Unknown)
-            {
-                Console.WriteLine("\n" + filename);
-                Console.WriteLine("This Video is Skipped");
-            }
-            return skip;
-        }
-
         public string? GenerateDecodeFFmpegCmd()
         {
             string? cmd;
@@ -229,6 +218,17 @@ namespace CpuAndGpuMetrics
             Console.WriteLine($"\n {cmd} \n");
 
             return cmd;
+        }
+
+        private bool IsVideoSkipped()
+        {
+            // Check if this video should be skipped. If not then generate ffmpeg cmd.
+            if (skip == true || hardwareAccel == HardwareAccel.Unknown)
+            {
+                Console.WriteLine("\n" + filename);
+                Console.WriteLine("This Video is Skipped");
+            }
+            return skip;
         }
 
         /// <summary>

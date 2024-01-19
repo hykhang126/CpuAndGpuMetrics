@@ -8,7 +8,7 @@ namespace CpuAndGpuMetrics
     /// </summary>
     static internal class CpuMetricRetriever
     {
-        /// <summary>Time (in ms) before reading CPU usage.</summary>
+        /// <summary>The time to wait (in milliseconds) between initializing and reading the counter for more accuracy.</summary>
         static readonly int TIME = 100;
 
         /// <summary>

@@ -27,8 +27,14 @@ namespace CpuAndGpuMetrics
         static ProgramSettings()
         {
             CURRENT_OS = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? OS.Linux : OS.Windows;
-            GPU = GpuType.Nvidia;
+            GPU = GpuType.Intel;
+            EXCEL_FILE_NAME = $"AutomatedData_{GPU}.xlsx";
         }
+
+        /// <summary>
+        /// Current OS of the machine. Default is Windows
+        /// </summary>
+        public readonly static OS CURRENT_OS;
 
         /// <summary>
         /// HARD-CODED GPU TYPE
@@ -38,17 +44,18 @@ namespace CpuAndGpuMetrics
         /// <summary>
         /// EXCEL FILE NAME
         /// </summary>
-        public readonly static string EXCEL_FILE_NAME = $"AutomatedData_{GPU}.xlsx";
+        public readonly static string EXCEL_FILE_NAME;
 
         /// <summary>
         /// DEFAULT OPTION FOR HW ACCEL
         /// </summary>
-        public readonly static bool DEFAULT_IS_DECODE_ACCEL_ON = true;
+        public readonly static bool DEFAULT_IS_DECODE_ONLY_ON = true;
 
         /// <summary>
-        /// Current OS of the machine. Default is Windows
+        /// Indicate whether hardware decode is on or not
         /// </summary>
-        public readonly static OS CURRENT_OS;
+        public static bool IS_DECODE_ONLY_ON { get; set; }
+
     }
 
     public enum OS
