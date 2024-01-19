@@ -85,6 +85,8 @@ namespace CpuAndGpuMetrics
                 float[] copyValues = new float[instanceNames.Length];
                 float[] encodeValues = new float[instanceNames.Length];
 
+                string[] engtypeValues = ["engtype_3D", "engtype_VideoDecode", "engtype_Copy", "engtype_VideoEncode"];
+
                 // Loop through all instances and populate values
                 for (int i = 0; i < instanceNames.Length; i++)
                 {
@@ -94,6 +96,7 @@ namespace CpuAndGpuMetrics
 
                     float value;
 
+                    // Mapping/hash set
                     if (instance.Contains("engtype_3D"))
                     {
                         value = GetReading(counter, TIME);

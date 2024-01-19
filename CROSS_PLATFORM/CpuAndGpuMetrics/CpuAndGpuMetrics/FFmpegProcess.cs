@@ -11,7 +11,8 @@ namespace CpuAndGpuMetrics
         private readonly string TESTSOURCESPATH = FilePath.TESTSOURCESPATH;
 
         /// <summary>Absolute path of ffmpeg.exe.</summary>
-        private readonly string FFMPEGPATH = FilePath.WINDOWS_FFMPEGPATH;
+        /// If statement for linux switch
+        private readonly string FFMPEGPATH = (ProgramSettings.CURRENT_OS == OS.Windows) ? FilePath.WINDOWS_FFMPEGPATH : FilePath.LINUX_FFMPEGPATH;
 
         /// <summary>Boolean indicating of process should be skipped.</summary>
         private readonly bool skip = false;
@@ -184,13 +185,10 @@ namespace CpuAndGpuMetrics
             string? cmd;
             string codec;
             float time = 20f;
+            string lowerfilename = filename.ToLower();
 
             // Set the codec
-            if (filename.Contains("H264") || filename.Contains("h264") || filename.Contains("libx264") || filename.Contains("x264") )
-            {
-                codec = "h264";
-            }
-            else if (filename.Contains("H265") || filename.Contains("h265") || filename.Contains("hevc") || filename.Contains("x265"))
+            if (lowerfilename.Contains("H265") || lowerfilename.Contains("hevc") || lowerfilename.Contains("x265"))
             { 
                 codec = "hevc";
             }

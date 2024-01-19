@@ -1,6 +1,7 @@
 using OfficeOpenXml;
 //main namespace for EPPlus library (allows us to manipulate the excel file)
 using System.Drawing;
+using static CpuAndGpuMetrics.Video;
 
 namespace CpuAndGpuMetrics
 {
@@ -32,6 +33,69 @@ namespace CpuAndGpuMetrics
 				return CPUandGPUExcelPack.Workbook.Worksheets.Add(sheetName);
 			}
 		}
+
+
+		public void excelColoring(ExcelWorksheet worksheet, string hwaccel, string codec, string chroma, int newRow) 
+		{
+			// Mapping string to coolor and use .{} to fix
+            if (hwaccel != "Unknown")
+            {
+                worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+            }
+            if (hwaccel == "Cuda")
+            {
+                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSlateGray);
+            }
+            else if (hwaccel == "D3D11VA")
+            {
+                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSteelBlue);
+            }
+            else if (hwaccel == "Vulkan")
+            {
+                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
+            }
+            else if (hwaccel == "VAAPI")
+            {
+                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSalmon);
+            }
+            else if (hwaccel == "None")
+            {
+                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+            }
+            else if (hwaccel == "QSV")
+            {
+                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSkyBlue);
+            }
+			// Missing VDPAU
+
+
+            if (codec != "Unknown")
+            {
+                worksheet.Cells[newRow, 6].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+            }
+            if (codec == "h264" || codec == "H264")
+            {
+                worksheet.Cells[newRow, 6].Style.Fill.BackgroundColor.SetColor(Color.Salmon);
+            }
+            else if (codec == "h265" || codec == "H265")
+            {
+                worksheet.Cells[newRow, 6].Style.Fill.BackgroundColor.SetColor(Color.LightGreen);
+            }
+
+
+            if (chroma != "Unknown")
+            {
+                worksheet.Cells[newRow, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+            }
+            if (chroma == "Subsampling_420")
+            {
+                worksheet.Cells[newRow, 7].Style.Fill.BackgroundColor.SetColor(Color.Green);
+            }
+            else if (chroma == "Subsampling_444")
+            {
+                worksheet.Cells[newRow, 7].Style.Fill.BackgroundColor.SetColor(Color.Red);
+            }
+        }
 
         /// <summary>
         /// 
@@ -97,6 +161,8 @@ namespace CpuAndGpuMetrics
 
 			Console.WriteLine("Data successfully written to Excel.");
 		}
+
+
 	
 		/// <summary>
 		/// 
@@ -159,7 +225,7 @@ namespace CpuAndGpuMetrics
 			float? vidDec2 = container.VideoDecode2;
 
 			// Information from Misc. obj
-			string OS = "Linux"; // HARD-CODED
+			string OS = ProgramSettings.CURRENT_OS.ToString(); // HARD-CODED
 			string? gpuType = gpu?.ToString();
 			string decodeMethod = (hardwareAccel == "none") ? "CPU Decoding" : "GPU Decoding";
 			string hwaccel = hardwareAccel;
@@ -184,61 +250,10 @@ namespace CpuAndGpuMetrics
 			worksheet.Cells[newRow, 15].Value = vidDec1;
 			worksheet.Cells[newRow, 16].Value = vidDec2.HasValue ? vidDec2 : "N/A";
 
+			excelColoring(worksheet, hwaccel, chroma, bitDepth, newRow);
+
 			//More formatting: Coloring the hwaccel, codec, and chroma for further organization
-			if (hwaccel == "Cuda")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSlateGray);
-			}
-			else if (hwaccel == "D3D11VA")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSteelBlue);
-			}
-			else if (hwaccel == "Vulkan")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
-			}
-			else if (hwaccel == "VAAPI")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSalmon);
-			}
-			else if (hwaccel == "None")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-			}
-			else if (hwaccel == "QSV")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSkyBlue);
-			}
 			
-
-			if (codec == "h264" || codec == "H264")
-			{
-				worksheet.Cells[newRow, 6].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 6].Style.Fill.BackgroundColor.SetColor(Color.Salmon);
-			}
-			else if (codec == "h265" || codec == "H265")
-			{
-				worksheet.Cells[newRow, 6].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 6].Style.Fill.BackgroundColor.SetColor(Color.LightGreen);
-			}
-
-
-			if (chroma == "Subsampling_420")
-			{
-				worksheet.Cells[newRow, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 7].Style.Fill.BackgroundColor.SetColor(Color.Green);
-			}
-			else if (chroma == "Subsampling_444")
-			{
-				worksheet.Cells[newRow, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 7].Style.Fill.BackgroundColor.SetColor(Color.Red);
-			}
 		}
     }
 
@@ -284,7 +299,7 @@ namespace CpuAndGpuMetrics
 			float? vidEnc = container.VideoEncode;
 
 			// Information from Misc. obj
-			string OS = "Windows"; // HARD-CODED
+			string OS = ProgramSettings.CURRENT_OS.ToString(); // HARD-CODED
 			string? gpuType = gpu?.ToString();
 			string decodeMethod = (hardwareAccel == "none") ? "CPU Decoding" : "GPU Decoding";
 			string hwaccel = hardwareAccel;
@@ -306,62 +321,10 @@ namespace CpuAndGpuMetrics
 			worksheet.Cells[newRow, 12].Value = gpuUsage;
 			worksheet.Cells[newRow, 13].Value = vidEnc;
 
-			//More formatting: Coloring the hwaccel, codec, and chroma for further organization
-			if (hwaccel == "Cuda")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSlateGray);
-			}
-			else if (hwaccel == "D3D11VA")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSteelBlue);
-			}
-			else if (hwaccel == "Vulkan")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
-			}
-			else if (hwaccel == "VAAPI")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSalmon);
-			}
-			else if (hwaccel == "None")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-			}
-			else if (hwaccel == "QSV")
-			{
-				worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSkyBlue);
-			}
-			
+            //More formatting: Coloring the hwaccel, codec, and chroma for further organization
+            excelColoring(worksheet, hwaccel, chroma, bitDepth, newRow);
 
-			if (codec == "h264" || codec == "H264")
-			{
-				worksheet.Cells[newRow, 6].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 6].Style.Fill.BackgroundColor.SetColor(Color.Salmon);
-			}
-			else if (codec == "h265" || codec == "H265")
-			{
-				worksheet.Cells[newRow, 6].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 6].Style.Fill.BackgroundColor.SetColor(Color.LightGreen);
-			}
-
-
-			if (chroma == "Subsampling_420")
-			{
-				worksheet.Cells[newRow, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 7].Style.Fill.BackgroundColor.SetColor(Color.Green);
-			}
-			else if (chroma == "Subsampling_444")
-			{
-				worksheet.Cells[newRow, 7].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-				worksheet.Cells[newRow, 7].Style.Fill.BackgroundColor.SetColor(Color.Red);
-			}
-		}
+        }
     }
 
 }
