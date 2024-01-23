@@ -34,41 +34,54 @@ namespace CpuAndGpuMetrics
 			}
 		}
 
+		/// <summary>
+		/// Honestly, this looks disgusting :/
+		/// </summary>
+		/// <param name="worksheet"></param>
+		/// <param name="video"></param>
+		/// <param name="container"></param>
+		/// <param name="hardwareAccel"></param>
+		/// <param name="gpu"></param>
+		/// <param name="newRow"></param>
+        public void ShortDataExcel(ExcelWorksheet worksheet, Video video, PerformanceMetricsContainer container, string hardwareAccel, GpuType? gpu, int newRow)
+        {
+			string[] dataStrings = [ProgramSettings.CURRENT_OS.ToString(), gpu?.ToString(), (hardwareAccel == "none") ? "CPU Decoding" : "GPU Decoding", hardwareAccel,
+                video.CodecExt.ToString(), video.ChromaExt.ToString(), video.BitDepthExt.ToString(), video.ResolutionExt.ToString()];
 
-		public void excelColoring(ExcelWorksheet worksheet, string hwaccel, string codec, string chroma, int newRow) 
+			float?[] data = [container.FramesPerSecond, container.CpuUsage, container.GpuOverall];
+
+            //Organizing the Column headers into their correct positions
+            worksheet.Cells[newRow, 1].Value = newRow - 1;
+			int i;
+			for (i = 0; i < dataStrings.Length; i++)
+			{
+                worksheet.Cells[newRow, i + 2].Value = dataStrings[i];
+            }
+            for (int j = 0; j < data.Length; j++)
+            { 
+                worksheet.Cells[newRow, j + i + 3].Value = data[j];
+            }
+        }
+
+        public void excelColoring(ExcelWorksheet worksheet, string hwaccel, string codec, string chroma, int newRow) 
 		{
 			// Mapping string to coolor and use .{} to fix
+			string[] hwacellStrings = ["Cuda", "D3D11VA", "Vulkan", "VAAPI", "None", "QSV", "VDPAU"];
+			Color[] hwacellColors = [Color.LightSlateGray, Color.LightSteelBlue, Color.LightYellow, Color.LightSalmon, Color.Yellow, Color.LightSkyBlue, Color.Linen];
             if (hwaccel != "Unknown")
             {
                 worksheet.Cells[newRow, 5].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
             }
-            if (hwaccel == "Cuda")
-            {
-                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSlateGray);
+			int index = Array.IndexOf(hwacellStrings, hwaccel);
+			
+			if (index != -1)
+			{
+				worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(hwacellColors[index]);
             }
-            else if (hwaccel == "D3D11VA")
-            {
-                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSteelBlue);
-            }
-            else if (hwaccel == "Vulkan")
-            {
-                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
-            }
-            else if (hwaccel == "VAAPI")
-            {
-                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSalmon);
-            }
-            else if (hwaccel == "None")
-            {
-                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-            }
-            else if (hwaccel == "QSV")
-            {
-                worksheet.Cells[newRow, 5].Style.Fill.BackgroundColor.SetColor(Color.LightSkyBlue);
-            }
+           // Dictionary with hardcoded key pairs might be better...
 			// Missing VDPAU
 
-
+			// Maybe apply the above?
             if (codec != "Unknown")
             {
                 worksheet.Cells[newRow, 6].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
