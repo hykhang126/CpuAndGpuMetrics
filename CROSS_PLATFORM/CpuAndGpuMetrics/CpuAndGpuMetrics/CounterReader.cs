@@ -29,6 +29,8 @@ namespace CpuAndGpuMetrics
                 Console.WriteLine("Error retrieving performance counter - " + counter.CounterName + ": " + e.Message);
             }
             return value;
+
+            // Example command
         }
     }
 }
