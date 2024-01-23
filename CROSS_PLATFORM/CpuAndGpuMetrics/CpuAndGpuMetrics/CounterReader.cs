@@ -31,7 +31,6 @@ namespace CpuAndGpuMetrics
             return value;
 
             // Example command
-            //mobzmobz
         }
     }
 }
