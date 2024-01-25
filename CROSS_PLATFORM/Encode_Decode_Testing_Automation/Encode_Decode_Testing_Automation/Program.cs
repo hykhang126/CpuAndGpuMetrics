@@ -1,4 +1,5 @@
 ﻿using CpuAndGpuMetrics;
+using System.Diagnostics;
 using static CpuAndGpuMetrics.FFmpegProcess;
 using static CpuAndGpuMetrics.Video;
 
@@ -38,6 +39,8 @@ class Program
     /// </summary>
     private static int testNbr = 1;
 
+    static SemaphoreSlim semaphore = new SemaphoreSlim(1);
+
     static void ExecuteAutomatedTest()
     {
         // Set Sources path
@@ -70,55 +73,65 @@ class Program
                 FFmpegProcess ffmpegProcess = FilenameToFFmpegProcess(filename, video, hwaccel);
                 
                 // Start the ffmpeg process
-                var p = ffmpegProcess.StartProcess(HardwareAccelerator.IsDecodeAccel);
-
-                // Start data collection
-                if (p != null)
-                {
-                    Console.WriteLine("...Sleeping in Program.cs...");
-                    Thread.Sleep(3000);
-                    Console.WriteLine("Finish sleeping! \n");
-
-                    container.PopulateData(gpu);
-                    Console.WriteLine("Data Populated.");
-
-                    Tuple<Video, PerformanceMetricsContainer, HardwareAccelerator> tuple = new(video, container, hwaccel);
-                    videoPerfData.Add(tuple);
-
-                    // Start gathering fps value using process stderr
-                    float fps = -1;
-                    while (p != null && !p.StandardError.EndOfStream)
+                List<Task > tasksList = new List<Task>();
+                int j = 4;
+                while (j > 0) {
+                    tasksList.Add(Task.Run(async () =>
                     {
-                        string? line = p.StandardError.ReadLine();
-                        //Console.WriteLine(line);
-                        if (line != null && line.ToLower().Contains("fps"))
+                        var p = ffmpegProcess.StartProcess(HardwareAccelerator.IsDecodeAccel);
+
+                        // Start data collection
+                        if (p != null)
                         {
-                            int fpsIndex = line.ToLower().IndexOf("fps");
+                            Console.WriteLine("...Sleeping in Program.cs...");
+                            Thread.Sleep(3000);
+                            Console.WriteLine("Finish sleeping! \n");
 
-                            string fpsString = line.ToLower()[(fpsIndex + 4)..];
+                            container.PopulateData(gpu);
+                            Console.WriteLine("Data Populated.");
 
-                            if (fpsString.Contains('q'))
+                            Tuple<Video, PerformanceMetricsContainer, HardwareAccelerator> tuple = new(video, container, hwaccel);
+                            videoPerfData.Add(tuple);
+
+                            // Start gathering fps value using process stderr
+                            float fps = -1;
+                            while (p != null && !p.StandardError.EndOfStream)
                             {
-                                fpsString = fpsString[..(fpsString.IndexOf("q") - 1)].Trim();
-                                fps = float.TryParse(fpsString, out float f) ? float.Parse(fpsString) : fps;
+                                string? line = p.StandardError.ReadLine();
+                                //Console.WriteLine(line);
+                                if (line != null && line.ToLower().Contains("fps"))
+                                {
+                                    int fpsIndex = line.ToLower().IndexOf("fps");
+
+                                    string fpsString = line.ToLower()[(fpsIndex + 4)..];
+
+                                    if (fpsString.Contains('q'))
+                                    {
+                                        fpsString = fpsString[..(fpsString.IndexOf("q") - 1)].Trim();
+                                        fps = float.TryParse(fpsString, out float f) ? float.Parse(fpsString) : fps;
+                                    }
+                                }
                             }
+                            container.FramesPerSecond = fps;
+
+                            // Write to Excel
                         }
-                    }
-                    container.FramesPerSecond = fps;
 
-                    // Write to Excel
-                    excelWriter = (HardwareAccelerator.IsDecodeAccel) ? new ExcelWriterDecodeOnly(testNbr) : new ExcelWriterEncodeOnly(testNbr);
-                    excelWriter.DataListToExcel(videoPerfData, EXCEL_FILE_PATH);
+                        // End process if not already ended
+                        if (p != null && !p.HasExited)
+                        {
+                            p.Kill();
+                        }
+
+                        // DEBUG
+                        container.DisplayValues();
+                    }));
+                    j--;
                 }
+                Task.WaitAll(tasksList.ToArray());
+                excelWriter = (HardwareAccelerator.IsDecodeAccel) ? new ExcelWriterDecodeOnly(testNbr) : new ExcelWriterEncodeOnly(testNbr);
+                excelWriter.DataListToExcel(videoPerfData, EXCEL_FILE_PATH);
 
-                // End process if not already ended
-                if (p != null && !p.HasExited)
-                {
-                    p.Kill();
-                }
-
-                // DEBUG
-                container.DisplayValues();
             }
         }
         // Increment the counter for test type's numbering
