@@ -63,32 +63,33 @@ class Program
         {
             foreach (var filename in fileNames)
             {
+                // Create a video object that stores all video info
                 Video video = FilenameToVideo(filename);
-
-                PerformanceMetricsContainer container = new();
 
                 // Create the hardware accelerator class containing info on hwaccel type, gpu type and whether hwaccel is on or off
                 HardwareAccelerator hwaccel = new(hardwareAccel, gpu, ProgramSettings.IS_DECODE_ONLY_ON);
 
+                // Create ffmpegProgress to generate ffmpeg command based on video and hwaccel settings 
                 FFmpegProcess ffmpegProcess = FilenameToFFmpegProcess(filename, video, hwaccel);
                 
                 // Start the ffmpeg process
                 List<Task > tasksList = new List<Task>();
                 int j = 4;
-                while (j > 0) {
+                while (j > 0) 
+                {
                     tasksList.Add(Task.Run(async () =>
                     {
                         var p = ffmpegProcess.StartProcess(HardwareAccelerator.IsDecodeAccel);
 
+                        PerformanceMetricsContainer container = new();
+
                         // Start data collection
                         if (p != null)
                         {
-                            Console.WriteLine("...Sleeping in Program.cs...");
-                            Thread.Sleep(3000);
-                            Console.WriteLine("Finish sleeping! \n");
+                            Thread.Sleep(2000);
 
                             container.PopulateData(gpu);
-                            Console.WriteLine("Data Populated.");
+
 
                             Tuple<Video, PerformanceMetricsContainer, HardwareAccelerator> tuple = new(video, container, hwaccel);
                             videoPerfData.Add(tuple);
@@ -113,8 +114,6 @@ class Program
                                 }
                             }
                             container.FramesPerSecond = fps;
-
-                            // Write to Excel
                         }
 
                         // End process if not already ended
@@ -129,6 +128,8 @@ class Program
                     j--;
                 }
                 Task.WaitAll(tasksList.ToArray());
+
+                // Write to Excel
                 excelWriter = (HardwareAccelerator.IsDecodeAccel) ? new ExcelWriterDecodeOnly(testNbr) : new ExcelWriterEncodeOnly(testNbr);
                 excelWriter.DataListToExcel(videoPerfData, EXCEL_FILE_PATH);
 
@@ -144,6 +145,16 @@ class Program
     static void Main()
     {
         bool continueTest;
+
+        PerformanceCounterCategory category = new("GPU Engine");
+        string[] instanceNames = category.GetInstanceNames();
+        int uniqueVideoDecodeCount = instanceNames
+        .Select(s => s.Split(new[] { "_eng_" }, StringSplitOptions.None))
+        .Where(split => split.Length > 1 && split[1].Contains("VideoDecode"))
+        .Select(split => split[1]) // Extract the substring after "_eng_"
+        .Distinct() // Filter unique strings
+        .Count();
+        Console.WriteLine(uniqueVideoDecodeCount);
 
         do 
         {
