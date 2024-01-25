@@ -146,15 +146,7 @@ class Program
     {
         bool continueTest;
 
-        PerformanceCounterCategory category = new("GPU Engine");
-        string[] instanceNames = category.GetInstanceNames();
-        int uniqueVideoDecodeCount = instanceNames
-        .Select(s => s.Split(new[] { "_eng_" }, StringSplitOptions.None))
-        .Where(split => split.Length > 1 && split[1].Contains("VideoDecode"))
-        .Select(split => split[1]) // Extract the substring after "_eng_"
-        .Distinct() // Filter unique strings
-        .Count();
-        Console.WriteLine(uniqueVideoDecodeCount);
+
 
         do 
         {

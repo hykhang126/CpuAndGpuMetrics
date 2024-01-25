@@ -1,3 +1,4 @@
+﻿
 ﻿using System.Diagnostics;
 using System.Reflection.Metadata;
 using static CpuAndGpuMetrics.CounterReader;
@@ -72,6 +73,11 @@ namespace CpuAndGpuMetrics
                 // Initialize PerformanceCounters for GPU metrics
                 PerformanceCounterCategory category = new("GPU Engine");
                 string[] instanceNames = category.GetInstanceNames();
+                string[] uniqueVideoDecode = instanceNames
+                .Select(s => s.Split(new[] { "_eng_" }, StringSplitOptions.None))
+                .Where(split => split.Length > 1 && split[1].Contains("VideoDecode"))
+                .Select(split => split[1]).Distinct().OrderBy(str => str).ToArray(); 
+
 
                 if (instanceNames == null || instanceNames.Length == 0)
                 {
@@ -79,13 +85,14 @@ namespace CpuAndGpuMetrics
                     return new float[] { -99f };
                 }
 
-                // float[] totalValues = new float[instanceNames.Length];
-                float[] decodeValues = new float[instanceNames.Length];
-                float[] d3Values = new float[instanceNames.Length];
-                float[] copyValues = new float[instanceNames.Length];
-                float[] encodeValues = new float[instanceNames.Length];
-
-                string[] engtypeValues = ["engtype_3D", "engtype_VideoDecode", "engtype_Copy", "engtype_VideoEncode"];
+                Dictionary<string, float> engtypeValues = new Dictionary<string, float>
+                {
+                    { "engtype_3D", 0 },
+                    { "engtype_VideoDecode", 0 },
+                    { "engtype_Copy", 0 },
+                    { "engtype_VideoEncode", 0 }
+                };
+                foreach (string instanceName in uniqueVideoDecode) engtypeValues.Add(instanceName, 0f);
 
                 // Loop through all instances and populate values
                 for (int i = 0; i < instanceNames.Length; i++)
@@ -95,49 +102,25 @@ namespace CpuAndGpuMetrics
                     PerformanceCounter counter = new("GPU Engine", "Utilization Percentage", instance);
 
                     float value;
-
-                    // Mapping/hash set
-                    if (instance.Contains("engtype_3D"))
+                    foreach (var engtype in engtypeValues.Keys)
                     {
-                        value = GetReading(counter, TIME);
-                        d3Values[i] = value;
-                    }
-
-                    if (instance.Contains("engtype_VideoDecode"))
-                    {
-                        value = GetReading(counter, TIME);
-                        decodeValues[i] = value;
-                    }
-
-                    if (instance.Contains("engtype_Copy"))
-                    {
-                        value = GetReading(counter, TIME);
-                        copyValues[i] = value;
-                    }
-
-                    if (instance.Contains("engtype_VideoEncode"))
-                    {
-                        value = GetReading(counter, TIME);
-                        encodeValues[i] = value;
+                        if (instance.Contains(engtype))
+                        {
+                            value = GetReading(counter, TIME);
+                            engtypeValues[engtype] += value;
+                        }
                     }
 
                     counter.Dispose();
 
                 }
 
-                float d3Utilization = d3Values.Sum();
-                float decodeUtilization = decodeValues.Sum();
-                float copyUtilization = copyValues.Sum();
-                float encodeUtilization = encodeValues.Sum();
-                //Console.WriteLine($"3d: {d3Utilization}, decode: {decodeUtilization}, copy: {copyUtilization}",
-                //    d3Utilization, decodeUtilization, copyUtilization);
-
-                return new float[] { d3Utilization, copyUtilization, decodeUtilization, encodeUtilization };
+                return engtypeValues.Values.ToArray();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
-                return new float[] {-99f};
+                return new float[] { -99f };
             }
         }
 
