@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="Hardware.Info" Version="100.0.0.1" />
 	<PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
 	<PackageReference Include="EPPlus" Version="7.0.1" />
 	<PackageReference Include="OfficeOpenXml.Core.ExcelPackage" Version="1.0.0" />
