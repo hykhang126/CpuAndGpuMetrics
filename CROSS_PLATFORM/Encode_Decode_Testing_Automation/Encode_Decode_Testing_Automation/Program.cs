@@ -146,8 +146,6 @@ class Program
     {
         bool continueTest;
 
-
-
         do 
         {
             // Output current OS

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CpuAndGpuMetrics
 {
@@ -144,27 +145,27 @@ namespace CpuAndGpuMetrics
             if (ProgramSettings.CURRENT_OS == OS.Windows)
             {
                 // Function returns array in format: float[] { d3Utilization, copyUtilization, decodeUtilization, encodeUtilization }
+                int metricsLength = gpuMetrics.Length;
+                VideoDecode0 = gpuMetrics[4];
+                VideoDecode1 = (metricsLength >= 6) ? gpuMetrics[5] : 0;
+                VideoDecode2 = (metricsLength >= 7) ? gpuMetrics[6] : null;
                 Gpu3D = gpuMetrics[0];
-
-                GpuCopy = gpuMetrics[1];
+                GpuCopy = gpuMetrics[2];
+                GpuOverall = gpuMetrics.Where((value, index) => index != 1).Max();
 
                 if (type == GpuType.Intel)
                 {
-                    VideoDecode0 = gpuMetrics[2];
-                    VideoDecode1 = 0;
-                    GpuOverall = new[] { Gpu3D, VideoDecode0, GpuCopy }.Max();
-                    VideoEncode = (ProgramSettings.IS_DECODE_ONLY_ON)? -1f : VideoDecode0;
+                    VideoEncode = (ProgramSettings.IS_DECODE_ONLY_ON)? -1f : gpuMetrics[1]; // |TO BE DETERMINED when encoding with multiple streams
                 }
                 else if (type == GpuType.Nvidia)
                 {
-                    VideoDecode0 = VideoDecode1 = (float)(VideoDecode2 = gpuMetrics[2] / 3);
-                    GpuOverall = new[] { Gpu3D, VideoDecode0, GpuCopy }.Max();
                     VideoEncode = gpuMetrics[3];
                 }
             }
 
             else if (ProgramSettings.CURRENT_OS == OS.Linux) 
             {
+                this.GpuCopy = -1;
                 if (type == GpuType.Nvidia)
                 {
                     this.GpuOverall = gpuMetrics[0];
@@ -172,7 +173,6 @@ namespace CpuAndGpuMetrics
                     this.VideoDecode1 = 0;
                     this.VideoDecode2 = 0;
                     this.VideoEncode = gpuMetrics[2];
-                    this.GpuCopy = -1;
                 }
 
                 else if (type == GpuType.Intel)
@@ -182,7 +182,6 @@ namespace CpuAndGpuMetrics
                     this.VideoDecode1 = gpuMetrics[2];
                     this.VideoDecode2 = null;
                     this.VideoEncode = gpuMetrics[3];
-                    this.GpuCopy = -1;
                 }
             }
 
