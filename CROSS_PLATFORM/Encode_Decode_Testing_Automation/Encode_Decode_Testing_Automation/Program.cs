@@ -1,5 +1,4 @@
 ﻿using CpuAndGpuMetrics;
-using System.Diagnostics;
 using static CpuAndGpuMetrics.FFmpegProcess;
 using static CpuAndGpuMetrics.Video;
 
@@ -38,8 +37,6 @@ class Program
     /// Numbering the amount of test types
     /// </summary>
     private static int testNbr = 1;
-
-    static SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
     static void ExecuteAutomatedTest()
     {
@@ -144,12 +141,16 @@ class Program
     /// </summary>
     static void Main()
     {
+        //GetMachineInfo();
+
         bool continueTest;
 
         do 
         {
             // Output current OS
             Console.WriteLine("---Current OS: " + ProgramSettings.CURRENT_OS.ToString());
+            // Output current GPU type
+            Console.WriteLine("---Current GPU type: " + ProgramSettings.GPU.ToString());
             // Insert Input to continue program
             Console.WriteLine(" Continue program? (true or false)");
             continueTest = Convert.ToBoolean(Console.ReadLine());

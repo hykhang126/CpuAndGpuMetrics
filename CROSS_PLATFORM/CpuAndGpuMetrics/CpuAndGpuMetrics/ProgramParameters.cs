@@ -1,6 +1,6 @@
 
 
-using System.Reflection.Metadata;
+using Hardware.Info;
 using System.Runtime.InteropServices;
 
 namespace CpuAndGpuMetrics
@@ -27,8 +27,29 @@ namespace CpuAndGpuMetrics
         static ProgramSettings()
         {
             CURRENT_OS = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? OS.Linux : OS.Windows;
-            GPU = GpuType.Intel;
+            GPU = GetGPUInfo();
             EXCEL_FILE_NAME = $"AutomatedData_{GPU}.xlsx";
+        }
+
+        private static GpuType GetGPUInfo()
+        {
+            GpuType gpu = GpuType.Unknown;
+
+            hardwareInfo.RefreshVideoControllerList();
+            var hardware = hardwareInfo.VideoControllerList;
+            foreach ( var v in hardware )
+            {
+                string manufacturer = v.Manufacturer.ToUpper();
+                if (manufacturer.Contains("NVIDIA"))
+                {
+                    gpu = GpuType.Nvidia;
+                }
+                else if (manufacturer.Contains("INTEL") || manufacturer.Contains("MATROX"))
+                {
+                    gpu = GpuType.Intel;
+                }
+            }
+            return gpu;
         }
 
         /// <summary>
@@ -55,6 +76,11 @@ namespace CpuAndGpuMetrics
         /// Indicate whether hardware decode is on or not
         /// </summary>
         public static bool IS_DECODE_ONLY_ON { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static readonly IHardwareInfo hardwareInfo = new HardwareInfo();
 
     }
 
