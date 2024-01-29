@@ -145,22 +145,26 @@ namespace CpuAndGpuMetrics
             if (ProgramSettings.CURRENT_OS == OS.Windows)
             {
                 // Function returns array in format: float[] { d3Utilization, copyUtilization, decodeUtilization, encodeUtilization }
-                int metricsLength = gpuMetrics.Length;
-                VideoDecode0 = gpuMetrics[4];
-                VideoDecode1 = (metricsLength >= 6) ? gpuMetrics[5] : 0;
-                VideoDecode2 = (metricsLength >= 7) ? gpuMetrics[6] : null;
-                Gpu3D = gpuMetrics[0];
-                GpuCopy = gpuMetrics[2];
-                GpuOverall = gpuMetrics.Where((value, index) => index != 1).Max();
+                if (type != GpuType.Unknown)
+                {
+                    int metricsLength = gpuMetrics.Length;
+                    VideoDecode0 = gpuMetrics[4];
+                    VideoDecode1 = (metricsLength >= 6) ? gpuMetrics[5] : 0;
+                    VideoDecode2 = (metricsLength >= 7) ? gpuMetrics[6] : null;
+                    Gpu3D = gpuMetrics[0];
+                    GpuCopy = gpuMetrics[2];
+                    GpuOverall = gpuMetrics.Where((value, index) => index != 1).Max();
 
-                if (type == GpuType.Intel)
-                {
-                    VideoEncode = (ProgramSettings.IS_DECODE_ONLY_ON)? -1f : gpuMetrics[1]; // |TO BE DETERMINED when encoding with multiple streams
+                    if (type == GpuType.Intel)
+                    {
+                        VideoEncode = (ProgramSettings.IS_DECODE_ONLY_ON) ? -1f : gpuMetrics[1]; // |TO BE DETERMINED when encoding with multiple streams
+                    }
+                    else if (type == GpuType.Nvidia)
+                    {
+                        VideoEncode = gpuMetrics[3];
+                    }
                 }
-                else if (type == GpuType.Nvidia)
-                {
-                    VideoEncode = gpuMetrics[3];
-                }
+
             }
 
             else if (ProgramSettings.CURRENT_OS == OS.Linux) 
