@@ -74,6 +74,8 @@ class Program
                 int j = 4;
                 while (j > 0) 
                 {
+                    int threadNum = j;
+
                     tasksList.Add(Task.Run(async () =>
                     {
                         var p = ffmpegProcess.StartProcess(HardwareAccelerator.IsDecodeAccel);
@@ -83,7 +85,8 @@ class Program
                         // Start data collection
                         if (p != null)
                         {
-                            Thread.Sleep(2000);
+                            Thread.Sleep(3000);
+                            Console.WriteLine($"-----Thread {threadNum} finished sleeping");
 
                             container.PopulateData(gpu);
 

@@ -14,7 +14,7 @@ namespace CpuAndGpuMetrics
         public readonly static string LINUX_FFMPEGPATH = " / usr/bin/ffmpeg";
 
         /// <summary>Absolute path of ffmpeg.exe on Windows OS.</summary>
-        public readonly static string WINDOWS_FFMPEGPATH = "C:\\Users\\jjiang\\Downloads\\ffmpeg-master-latest-win64-gpl\\ffmpeg-master-latest-win64-gpl\\bin\\ffmpeg";
+        public readonly static string WINDOWS_FFMPEGPATH = "C:\\Users\\tester\\Downloads\\ffmpeg-master-latest-win64-gpl\\ffmpeg-master-latest-win64-gpl\\bin\\ffmpeg";
 
         /// <summary>
         /// SPECIFY PATH WHERE YOU WOULD LIKE THE EXCEL FILES TO BE DUMPED
@@ -39,6 +39,7 @@ namespace CpuAndGpuMetrics
             var hardware = hardwareInfo.VideoControllerList;
             foreach ( var v in hardware )
             {
+                // Console.WriteLine( v );
                 string manufacturer = v.Manufacturer.ToUpper();
                 if (manufacturer.Contains("NVIDIA"))
                 {

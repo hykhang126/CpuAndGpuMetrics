@@ -26,7 +26,7 @@ namespace CpuAndGpuMetrics
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error retrieving performance counter - " + counter.CounterName + ": " + e.Message);
+                // Console.WriteLine("Error retrieving performance counter - " + counter.CounterName + ": " + e.Message);
             }
             return value;
 
