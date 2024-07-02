@@ -1,6 +1,4 @@
-﻿
-
-namespace CpuAndGpuMetrics
+﻿namespace CpuAndGpuMetrics
 {
     /// <summary>
     /// Contains relevant information about a video file.
@@ -10,7 +8,7 @@ namespace CpuAndGpuMetrics
         /// <summary>The codec (H264, H265).</summary>
         private Codec codec;
 
-        /// <summary>The chroma subsampling of the video (420, 444).</summary>
+        /// <summary>The chroma subsampling of the video (420, 422, 444).</summary>
         private Chroma chroma;
 
         /// <summary>The resolution of the video (HD, UHD).</summary>
@@ -77,7 +75,7 @@ namespace CpuAndGpuMetrics
         /// <returns>Video object.</returns>
         public static Video FilenameToVideo(string filename)
         {
-            String lowercaseFilename = filename.ToLower();
+            string lowercaseFilename = filename.ToLower();
             Codec codec = getCodec(lowercaseFilename);
             Chroma chroma = getChroma(lowercaseFilename);
             Resolution resolution = getResolution(lowercaseFilename);
@@ -86,30 +84,29 @@ namespace CpuAndGpuMetrics
             return new Video(codec, chroma, resolution, bitDepth);
         }
 
-
         /// <summary>
-        /// 
+        /// Check if filename contains any substring from a list of substring.
         /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="substrings"></param>
-        /// <returns></returns>
+        /// <param name="filename">Filename of video following a naming convention.</param>
+        /// <param name="substrings">List of substring corresponding to a category.</param>
+        /// <returns>Boolean value for the function.</returns>
         private static bool containsAny(string filename, string[] substrings)
         {
             return substrings.Any(substring => filename.Contains(substring));
         }
 
         /// <summary>
-        /// 
+        /// Get codec from filename.
         /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
+        /// <param name="filename">Filename of video following a naming convention.</param>
+        /// <returns>Codec value.</returns>
         private static Codec getCodec(string filename)
         {
-            string[] h264indicators = { "h264", "libx264", "x264" };
+            string[] h264indicators = { "h264", "libx264", "x264", "avc"};
             string[] h265indicators = { "h265", "hvec", "x265" };
 
-
-            if (containsAny(filename, h264indicators)) {
+            if (containsAny(filename, h264indicators))
+            {
                 return Codec.H264;
             }
             else if (containsAny(filename, h265indicators))
@@ -121,38 +118,41 @@ namespace CpuAndGpuMetrics
         }
 
         /// <summary>
-        /// 
+        /// Get chroma from filename.
         /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
+        /// <param name="filename">Filename of video following a naming convention.</param>
+        /// <returns>Chroma value.</returns>
         private static Chroma getChroma(string filename)
         {
             string[] chroma420 = { "420" };
+            string[] chroma422 = { "422" };
             string[] chroma444 = { "444" };
-
 
             if (containsAny(filename, chroma420))
             {
-                return Chroma.Subsampling_420;
+                return Chroma.YUV_420;
             }
             else if (containsAny(filename, chroma444))
             {
-                return Chroma.Subsampling_420;
+                return Chroma.YUV_444;
+            }
+            else if (containsAny(filename, chroma422))
+            {
+                return Chroma.YUV_422;
             }
 
             return Chroma.Unknown;
         }
 
         /// <summary>
-        /// 
+        /// Get resolution from filename.
         /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
+        /// <param name="filename">Filename of video following a naming convention.</param>
+        /// <returns>Resolution value.</returns>
         private static Resolution getResolution(string filename)
         {
-            string[] uhdindicators = { "uhd", "4k" };
-            string[] hdindicators = { "hd" };
-
+            string[] uhdindicators = { "uhd", "4k" , "2160p"};
+            string[] hdindicators = { "hd", "1080p" };
 
             if (containsAny(filename, uhdindicators))
             {
@@ -167,15 +167,14 @@ namespace CpuAndGpuMetrics
         }
 
         /// <summary>
-        /// 
+        /// Get bit depth from filename.
         /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
+        /// <param name="filename">Filename of video following a naming convention.</param>
+        /// <returns>Bit depth value.</returns>
         private static BitDepth getBitDepth(string filename)
         {
             string[] b8indicators = { "8bit", "b08" };
             string[] b10indicators = { "10bit", "b10" };
-
 
             if (containsAny(filename, b8indicators))
             {
@@ -205,8 +204,9 @@ namespace CpuAndGpuMetrics
         public enum Chroma
         {
             Unknown = 0,
-            Subsampling_420 = 1,
-            Subsampling_444 = 2,
+            YUV_420 = 1,
+            YUV_422 = 2,
+            YUV_444 = 3,
         }
 
         /// <summary>
@@ -228,6 +228,5 @@ namespace CpuAndGpuMetrics
             HD = 1,
             UHD = 2,
         }
-
     }
 }

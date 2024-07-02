@@ -1,6 +1,4 @@
-﻿
-
-namespace CpuAndGpuMetrics
+﻿namespace CpuAndGpuMetrics
 {
     /// <summary>
     /// Represents a hardware accelerator.
@@ -19,8 +17,9 @@ namespace CpuAndGpuMetrics
         /// <summary>
         /// Initializes a HardwareAccelerator object.
         /// </summary>
-        /// <param name="hardwareAccel"></param>
-        /// <param name="gpu"></param>
+        /// <param name="hardwareAccel">Hardware Acceleration method.</param>
+        /// <param name="gpu">GPU type/brand.</param>
+        /// <param name="isDecodeAccel">Boolean if we're doing hardware Decoding.</param>
         public HardwareAccelerator(HardwareAccel hardwareAccel, GpuType gpu, bool isDecodeAccel = false)
         {
             this.HardwareAccel = hardwareAccel;
@@ -37,23 +36,76 @@ namespace CpuAndGpuMetrics
         {
             HardwareAccel[] HardwareAccels;
 
+            // Hardware Acceleration changes depending on the OS (VAAPI needs to be added to Windows later)
             if (ProgramSettings.CURRENT_OS == OS.Linux)
             {
-                HardwareAccels = gpu switch
+                if (ProgramSettings.IS_DECODE_ONLY_ON)
                 {
-                    GpuType.Nvidia => [HardwareAccel.Cuda, HardwareAccel.VDPAU, HardwareAccel.Vulkan, HardwareAccel.None],
-                    GpuType.Intel => [HardwareAccel.QSV, HardwareAccel.VAAPI, HardwareAccel.Vulkan, HardwareAccel.None],
-                    _ => [HardwareAccel.None],
-                };
+                    //Checks to see if user wants to do software decode/Encode
+                    HardwareAccels = ProgramSettings.IS_SOFTWARE_ONLY_ON switch
+                    {
+                        true => new[] { HardwareAccel.None },
+                        _ => gpu switch
+                        {
+                            GpuType.Nvidia => new[] { HardwareAccel.Cuda, HardwareAccel.VDPAU, HardwareAccel.Vulkan, HardwareAccel.None },
+                            GpuType.Intel => new[] { HardwareAccel.QSV, HardwareAccel.VAAPI, HardwareAccel.Vulkan, HardwareAccel.None },
+                            _ => new[] { HardwareAccel.None },
+                        }
+                    };
+                }
+                else
+                {
+                    HardwareAccels = ProgramSettings.IS_SOFTWARE_ONLY_ON switch
+                    {
+                        true => new[] { HardwareAccel.None },
+                        _ => gpu switch
+                        {
+                            GpuType.Nvidia => new[] { HardwareAccel.Cuda, HardwareAccel.Vulkan, HardwareAccel.None },
+                            GpuType.Intel => new[] { HardwareAccel.QSV, HardwareAccel.VAAPI, HardwareAccel.None },
+                            _ => new[] { HardwareAccel.None },
+                        }
+                    };
+                }
             }
             else if (ProgramSettings.CURRENT_OS == OS.Windows)
             {
-                HardwareAccels = gpu switch
+
+                if (ProgramSettings.IS_DECODE_ONLY_ON)
                 {
-                    GpuType.Nvidia => [HardwareAccel.Cuda, HardwareAccel.D3D11VA, HardwareAccel.Vulkan, HardwareAccel.None],
-                    GpuType.Intel => [HardwareAccel.QSV, HardwareAccel.D3D11VA, HardwareAccel.Vulkan, HardwareAccel.None],
-                    _ => [HardwareAccel.None],
-                };
+                    HardwareAccels = ProgramSettings.IS_SOFTWARE_ONLY_ON switch
+                    {
+                        true => new[] { HardwareAccel.None },
+                       
+                        _ => gpu switch
+                        {
+                            GpuType.Nvidia => [HardwareAccel.Cuda,
+                            HardwareAccel.D3D11VA,
+                            HardwareAccel.Vulkan,
+                            HardwareAccel.None,
+                            HardwareAccel.D3D12VA],
+                            GpuType.Intel => [HardwareAccel.QSV, HardwareAccel.D3D11VA, HardwareAccel.Vulkan, HardwareAccel.D3D12VA, HardwareAccel.None],
+                            GpuType.Unknown => [HardwareAccel.None],
+                            _ => [HardwareAccel.None],
+                        }
+                    };
+
+                }
+                else
+                {
+                    HardwareAccels = ProgramSettings.IS_SOFTWARE_ONLY_ON switch
+                    {
+                        true => new[] { HardwareAccel.None },
+                        
+                        _ => gpu switch
+                        {
+                            GpuType.Nvidia => [HardwareAccel.Cuda, HardwareAccel.None],
+                            GpuType.Intel => [HardwareAccel.QSV, HardwareAccel.None],
+                            GpuType.Unknown => [HardwareAccel.None],
+                            _ => [HardwareAccel.None],
+                        }
+                    };
+                }
+
             }
             else HardwareAccels = [HardwareAccel.None];
 
@@ -75,6 +127,7 @@ namespace CpuAndGpuMetrics
         Vulkan = 5,
         VAAPI = 6,
         VDPAU = 7,
+        D3D12VA = 8
     }
 
     /// <summary>

@@ -8,29 +8,52 @@ namespace CpuAndGpuMetrics
     static class CounterReader
     {
         /// <summary>
-        /// Gets the current reading from a PerformanceCounter.
+        /// Gets the current reading from a List of PerformanceCounter.
         /// </summary>
-        /// <param name="counter">The PerformanceCounter to read from.</param>
+        /// <param name="gpuCounters">The PerformanceCounter List to read from.</param>
         /// <param name="time">The time to wait (in milliseconds) between initializing and reading the counter for more accuracy.</param>
-        /// <returns>A float representing the counter's current reading.</returns>
-        public static float GetReading(PerformanceCounter counter, int time)
+        /// <returns>A float representing the list of counter's current reading.</returns>
+        public static float GetReading(List<PerformanceCounter> gpuCounters, int time)
         {
+            // This part shouldn't run if OS is not Windows
             if (ProgramSettings.CURRENT_OS != OS.Windows) return -1.0f;
 
-            float value = 0;
+            // Get initial reading for every counter in the list
+            Parallel.ForEach(gpuCounters, x => TryGetMetric(x));
+            Thread.Sleep(time);
+
+            // Get the more accurate reading for every counter and sum them to get the total usage for this engine
+            float result = 0;
+            object lockObject = new object();
+            Parallel.ForEach(gpuCounters, x =>
+            {
+                float metric = TryGetMetric(x);
+                lock (lockObject)
+                {
+                    result += metric;
+                }
+            });
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get NextValue from Performance Counter.
+        /// </summary>
+        /// <param name="x">Performance Counter which we want value from.</param>
+        /// <returns>Float representing the value of the Performance Counter.</returns>
+        private static float TryGetMetric(PerformanceCounter x)
+        {
             try
             {
-                value = counter.NextValue(); // Call this to initialize the counter, this value will be inaccurate
-                Thread.Sleep(time);  // Wait a second to get a more accurate reading
-                value = counter.NextValue();
+                return x.NextValue();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                // Console.WriteLine("Error retrieving performance counter - " + counter.CounterName + ": " + e.Message);
+                //Console.WriteLine($"An error occurred: {ex.Message}");
+                return 0; // Return a default value
             }
-            return value;
-
-            // Example command
         }
     }
+
 }
