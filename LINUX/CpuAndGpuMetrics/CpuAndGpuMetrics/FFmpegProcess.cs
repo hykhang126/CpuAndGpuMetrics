@@ -11,7 +11,7 @@ namespace CpuAndGpuMetrics
         private readonly string TESTSOURCESPATH = FilePath.TESTSOURCESPATH;
 
         /// <summary>Absolute path of ffmpeg.exe.</summary>
-        private readonly string FFMPEGPATH = FilePath.FFMPEGPATH;
+        private readonly string FFMPEGPATH = FilePath.LINUX_FFMPEGPATH;
 
         /// <summary>Boolean indicating of process should be skipped.</summary>
         private readonly bool skip = false;
@@ -118,7 +118,7 @@ namespace CpuAndGpuMetrics
             return new FFmpegProcess(filename, hwaccel, skip);
         }
 
-        private bool isVideoSkipped()
+        private bool IsVideoSkipped()
         {
             // Check if this video should be skipped. If not then generate ffmnpeg cmd.
             if (skip == true || hardwareAccel == HardwareAccel.Unknown)
@@ -240,7 +240,7 @@ namespace CpuAndGpuMetrics
         public Process? StartProcess(bool isHardwareAccel)
         {
             // Check if the video is skipped
-            if (isVideoSkipped()) return null;
+            if (IsVideoSkipped()) return null;
 
             // Get Cmd
             string? cmd = (isHardwareAccel) ? GenerateDecodeFFmpegCmd() : GenerateEncodeFFmpegCmd();
